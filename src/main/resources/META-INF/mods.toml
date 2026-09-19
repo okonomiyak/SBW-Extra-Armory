@@ -1,0 +1,37 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="GPL-3.0-only"
+
+[[mods]]
+modId="sbwarmory"
+version="${file.jarVersion}"
+displayName="SBW Extra Armory"
+description='''SuperbWarfare addon adding extra weapons: cluster/smoke/spring grenades, a grenade-launching carbine, a throwing knife, and a guided SRAW launcher.'''
+
+[[dependencies.sbwarmory]]
+    modId="forge"
+    mandatory=true
+    versionRange="[47,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.sbwarmory]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.20.1,1.21)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.sbwarmory]]
+    modId="superbwarfare"
+    mandatory=true
+    versionRange="[0.8.0,)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.sbwarmory]]
+    modId="geckolib"
+    mandatory=true
+    versionRange="[4.4.0,)"
+    ordering="NONE"
+    side="BOTH"

@@ -1,0 +1,6 @@
+{
+  "parent": "sbwarmory:displaysettings/grenade_carbine.item",
+  "textures": {
+    "layer0": "sbwarmory:item/grenade_carbine"
+  }
+}

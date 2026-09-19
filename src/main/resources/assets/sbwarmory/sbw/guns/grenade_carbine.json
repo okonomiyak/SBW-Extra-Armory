@@ -1,0 +1,21 @@
+{
+  "Animation": {
+    "Idle": "animation.grenade_carbine.idle",
+    "ReloadNormal": "animation.grenade_carbine.reload_normal",
+    "ReloadEmpty": "animation.grenade_carbine.reload_empty"
+  },
+  "Model": {
+    "Animation": "sbwarmory:animations/grenade_carbine.animation.json",
+    "Model": "sbwarmory:geo/grenade_carbine.geo.json",
+    "Texture": "sbwarmory:textures/item/grenade_carbine.png",
+    "LODModel": "sbwarmory:geo/grenade_carbine.geo.json",
+    "LODTexture": "sbwarmory:textures/item/grenade_carbine.png"
+  },
+  "FlarePosition": [
+    0,
+    0,
+    1.5734
+  ],
+  "FlareSize": 0.3,
+  "EjectShell": false
+}

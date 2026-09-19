@@ -1,0 +1,14 @@
+{
+  "item.sbwarmory.smoke_cluster_grenade": "スモーククラスター擲弾",
+  "entity.sbwarmory.smoke_cluster_grenade": "スモーククラスター擲弾",
+  "item.sbwarmory.cluster_grenade": "クラスター擲弾",
+  "entity.sbwarmory.cluster_grenade": "クラスター擲弾",
+  "item.sbwarmory.grenade_carbine": "グレネードカービン",
+  "item.sbwarmory.throwing_knife": "投げナイフ",
+  "item.sbwarmory.spring_grenade": "スプリンググレネード",
+  "entity.sbwarmory.spring_grenade": "スプリンググレネード",
+  "item.sbwarmory.sraw_launcher": "SRAW",
+  "item.sbwarmory.sraw_missile": "SRAWミサイル",
+  "entity.sbwarmory.sraw_missile": "SRAWミサイル",
+  "itemGroup.sbwarmory": "SBW Extra Armory"
+}

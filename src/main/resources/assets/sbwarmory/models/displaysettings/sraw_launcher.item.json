@@ -1,0 +1,26 @@
+{
+  "parent": "builtin/entity",
+  "display": {
+    "firstperson_righthand": {
+      "scale": [1, 1, 1]
+    },
+    "firstperson_lefthand": {
+      "scale": [1, 1, 1]
+    },
+    "thirdperson_righthand": {
+      "scale": [1, 1, 1]
+    },
+    "thirdperson_lefthand": {
+      "scale": [1, 1, 1]
+    },
+    "ground": {
+      "scale": [1, 1, 1]
+    },
+    "fixed": {
+      "scale": [1, 1, 1]
+    },
+    "head": {
+      "scale": [1, 1, 1]
+    }
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "Spread": 3.5,
+  "RecoilX": 0.004,
+  "RecoilY": 0.023,
+  "Damage": 4,
+  "Projectile": "sbwarmory:cluster_grenade",
+  "ExplosionDamage": 40,
+  "ExplosionRadius": 3,
+  "Headshot": 0,
+  "Velocity": 3.75,
+  "Magazine": 1,
+  "Weight": 4,
+  "EmptyReloadTime": 64,
+  "RPM": 180,
+  "GunType": "CurvedLauncher",
+  "AmmoType": [
+    {
+      "Ammo": "sbwarmory:cluster_grenade",
+      "AmmoSlot": "Explosive",
+      "Projectile": "sbwarmory:cluster_grenade"
+    },
+    {
+      "Ammo": "sbwarmory:smoke_cluster_grenade",
+      "AmmoSlot": "Smoke",
+      "Projectile": "sbwarmory:smoke_cluster_grenade",
+      "Override": {
+        "Damage": 0,
+        "ExplosionDamage": 0,
+        "ExplosionRadius": 0
+      }
+    }
+  ],
+  "Icon": "sbwarmory:textures/gun_icon/grenade_carbine_icon.png",
+  "AvailablePerks": [
+    "superbwarfare:powerful_attraction",
+    "superbwarfare:intelligent_chip",
+    "superbwarfare:monster_hunter",
+    "superbwarfare:vorpal_weapon",
+    "superbwarfare:micro_missile",
+    "superbwarfare:battle_of_wits"
+  ],
+  "SoundInfo": {
+    "Fire1P": "superbwarfare:m_79_fire_1p",
+    "Fire3P": "superbwarfare:m_79_fire_3p",
+    "Fire3PFar": "superbwarfare:m_79_far",
+    "Fire3PVeryFar": "superbwarfare:m_79_veryfar",
+    "ReloadEmpty": "superbwarfare:m_79_reload_empty",
+    "CancellableSounds": [
+      "superbwarfare:m_79_reload_empty"
+    ]
+  },
+  "Crosshair": "@GunGrenade"
+}

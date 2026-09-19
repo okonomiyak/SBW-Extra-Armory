@@ -1,0 +1,36 @@
+{
+  "Spread": 2,
+  "RecoilX": 0.006,
+  "RecoilY": 0.015,
+  "Damage": 300,
+  "Projectile": "sbwarmory:sraw_missile",
+  "ExplosionDamage": 120,
+  "ExplosionRadius": 8,
+  "Headshot": 0,
+  "Velocity": 4,
+  "Magazine": 1,
+  "Weight": 8,
+  "EmptyReloadTime": 90,
+  "RPM": 100,
+  "GunType": "DirectLauncher",
+  "AmmoType": "sbwarmory:sraw_missile",
+  "Icon": "sbwarmory:textures/gun_icon/sraw_icon.png",
+  "AvailablePerks": [
+    "superbwarfare:powerful_attraction",
+    "superbwarfare:intelligent_chip",
+    "superbwarfare:monster_hunter",
+    "superbwarfare:vorpal_weapon",
+    "superbwarfare:micro_missile",
+    "superbwarfare:battle_of_wits"
+  ],
+  "SoundInfo": {
+    "Fire1P": "superbwarfare:rpg_fire_1p",
+    "Fire3P": "superbwarfare:rpg_fire_3p",
+    "Fire3PFar": "superbwarfare:rpg_far",
+    "Fire3PVeryFar": "superbwarfare:rpg_veryfar",
+    "ReloadEmpty": "superbwarfare:rpg_reload_empty",
+    "CancellableSounds": [
+      "superbwarfare:rpg_reload_empty"
+    ]
+  }
+}

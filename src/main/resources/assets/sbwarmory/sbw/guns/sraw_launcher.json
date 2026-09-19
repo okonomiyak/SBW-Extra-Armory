@@ -1,0 +1,21 @@
+{
+  "Animation": {
+    "Idle": "animation.sraw.idle",
+    "ReloadNormal": "animation.sraw.reload_normal",
+    "ReloadEmpty": "animation.sraw.reload_empty"
+  },
+  "Model": {
+    "Animation": "sbwarmory:animations/sraw.animation.json",
+    "Model": "sbwarmory:geo/sraw.geo.json",
+    "Texture": "sbwarmory:textures/item/sraw.png",
+    "LODModel": "sbwarmory:geo/sraw.geo.json",
+    "LODTexture": "sbwarmory:textures/item/sraw.png"
+  },
+  "FlarePosition": [
+    0,
+    0,
+    -11.5
+  ],
+  "FlareSize": 0.5,
+  "EjectShell": false
+}

@@ -1,0 +1,74 @@
+plugins {
+    id 'java-library'
+    id 'idea'
+    id 'net.neoforged.moddev.legacyforge' version '2.0.141'
+}
+
+version = mod_version
+group = mod_group_id
+
+base {
+    archivesName = mod_id
+}
+
+// mods.toml's version = "${file.jarVersion}" resolves from this manifest attribute at mod load.
+tasks.named('jar', Jar) {
+    manifest {
+        attributes(['Implementation-Version': project.version])
+    }
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+legacyForge {
+    version = project.forge_version
+
+    parchment {
+        mappingsVersion = project.parchment_mappings_version
+        minecraftVersion = project.parchment_minecraft_version
+    }
+
+    runs {
+        client {
+            client()
+            programArguments.addAll '--username', 'Dev1'
+        }
+
+        server {
+            server()
+            programArgument '--nogui'
+            gameDirectory = file('run-server')
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+        }
+    }
+}
+
+repositories {
+    maven {
+        name = 'CurseMaven'
+        url = 'https://cursemaven.com'
+        content { includeGroup 'curse.maven' }
+    }
+    maven {
+        name = 'KotlinForForge'
+        url = 'https://thedarkcolour.github.io/KotlinForForge/'
+    }
+}
+
+dependencies {
+    // Hard dependency: SmokeClusterGrenadeEntity extends SuperbWarfare's GunGrenadeEntity directly.
+    modImplementation 'curse.maven:superb-warfare-1218165:8104849'
+
+    // GrenadeCarbineItem/GrenadeCarbineItemModel compile directly against GeckoLib's renderer API.
+    modImplementation 'curse.maven:geckolib-388172:8285794'
+
+    // SuperbWarfare itself requires these to load; not declared transitively by CurseMaven,
+    // so the dev client/server needs them listed explicitly to boot.
+    modRuntimeOnly 'thedarkcolour:kotlinforforge:4.12.0'
+    modRuntimeOnly 'curse.maven:curios-309927:6418456'
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "sbwarmory:displaysettings/spring_grenade.item",
+  "textures": {
+    "layer0": "sbwarmory:item/spring_grenade"
+  }
+}

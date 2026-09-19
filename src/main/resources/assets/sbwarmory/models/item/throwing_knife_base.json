@@ -1,0 +1,6 @@
+{
+  "parent": "sbwarmory:displaysettings/throwing_knife.item",
+  "textures": {
+    "layer0": "sbwarmory:item/throwing_knife"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "item.sbwarmory.smoke_cluster_grenade": "Smoke Cluster Grenade",
+  "entity.sbwarmory.smoke_cluster_grenade": "Smoke Cluster Grenade",
+  "item.sbwarmory.cluster_grenade": "Cluster Grenade",
+  "entity.sbwarmory.cluster_grenade": "Cluster Grenade",
+  "item.sbwarmory.grenade_carbine": "Grenade Carbine",
+  "item.sbwarmory.throwing_knife": "Throwing Knife",
+  "item.sbwarmory.spring_grenade": "Spring Grenade",
+  "entity.sbwarmory.spring_grenade": "Spring Grenade",
+  "item.sbwarmory.sraw_launcher": "SRAW",
+  "item.sbwarmory.sraw_missile": "SRAW Missile",
+  "entity.sbwarmory.sraw_missile": "SRAW Missile",
+  "itemGroup.sbwarmory": "SBW Extra Armory"
+}
