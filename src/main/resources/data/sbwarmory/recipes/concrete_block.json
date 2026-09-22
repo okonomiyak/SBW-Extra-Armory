@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "XXX",
+    "X Y",
+    "YYY"
+  ],
+  "key": {
+    "X": { "item": "minecraft:sand" },
+    "Y": { "item": "minecraft:gravel" }
+  },
+  "result": {
+    "item": "sbwarmory:concrete_block",
+    "count": 1
+  }
+}

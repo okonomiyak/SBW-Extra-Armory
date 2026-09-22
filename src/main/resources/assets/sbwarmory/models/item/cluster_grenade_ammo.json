@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "sbwarmory:item/cluster_grenade_ammo"
+  }
+}

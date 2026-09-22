@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:smithing_transform",
+  "template": {
+    "item": "sbwarmory:grenade_carbine_blueprint"
+  },
+  "base": {
+    "item": "superbwarfare:rare_material_pack"
+  },
+  "addition": {
+    "item": "minecraft:dispenser"
+  },
+  "result": {
+    "item": "sbwarmory:grenade_carbine",
+    "count": 1
+  }
+}

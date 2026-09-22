@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    { "item": "sbwarmory:helmet_red" },
+    { "item": "superbwarfare:thermal_imaging_goggles" }
+  ],
+  "result": {
+    "item": "sbwarmory:night_vision_goggles_red",
+    "count": 1
+  }
+}

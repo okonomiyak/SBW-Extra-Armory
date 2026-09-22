@@ -1,0 +1,6 @@
+{
+  "parent": "sbwarmory:displaysettings/laser_designator.item",
+  "textures": {
+    "layer0": "sbwarmory:item/soflam"
+  }
+}

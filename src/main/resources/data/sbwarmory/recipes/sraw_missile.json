@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:smithing_transform",
+  "template": {
+    "item": "sbwarmory:sraw_missile_blueprint"
+  },
+  "base": {
+    "item": "superbwarfare:epic_material_pack"
+  },
+  "addition": {
+    "item": "superbwarfare:ancient_cpu"
+  },
+  "result": {
+    "item": "sbwarmory:sraw_missile",
+    "count": 1
+  }
+}

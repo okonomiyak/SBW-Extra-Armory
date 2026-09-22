@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "XYX"
+  ],
+  "key": {
+    "X": {
+      "item": "superbwarfare:m18_smoke_grenade"
+    },
+    "Y": {
+      "item": "superbwarfare:grenade_40mm"
+    }
+  },
+  "result": {
+    "item": "sbwarmory:cluster_smoke_ammo",
+    "count": 1
+  }
+}

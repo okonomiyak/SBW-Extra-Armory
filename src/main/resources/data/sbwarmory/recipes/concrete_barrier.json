@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    { "item": "sbwarmory:concrete_block" }
+  ],
+  "result": {
+    "item": "sbwarmory:concrete_barrier",
+    "count": 2
+  }
+}

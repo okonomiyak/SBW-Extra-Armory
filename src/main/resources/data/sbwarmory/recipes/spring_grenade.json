@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    { "item": "superbwarfare:hand_grenade" },
+    { "item": "minecraft:gunpowder" }
+  ],
+  "result": {
+    "item": "sbwarmory:spring_grenade",
+    "count": 1
+  }
+}

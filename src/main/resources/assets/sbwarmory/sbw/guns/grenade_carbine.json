@@ -1,8 +1,7 @@
 {
   "Animation": {
     "Idle": "animation.grenade_carbine.idle",
-    "ReloadNormal": "animation.grenade_carbine.reload_normal",
-    "ReloadEmpty": "animation.grenade_carbine.reload_empty"
+    "Reload": "animation.grenade_carbine.reload"
   },
   "Model": {
     "Animation": "sbwarmory:animations/grenade_carbine.animation.json",

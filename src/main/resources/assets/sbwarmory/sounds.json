@@ -1,0 +1,12 @@
+{
+  "air_raid_siren": {
+    "sounds": [
+      "sbwarmory:air_raid_siren"
+    ]
+  },
+  "yarimasune": {
+    "sounds": [
+      "superbwarfare:yarimasune"
+    ]
+  }
+}

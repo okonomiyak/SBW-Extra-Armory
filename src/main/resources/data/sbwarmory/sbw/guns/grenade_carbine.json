@@ -15,12 +15,12 @@
   "GunType": "CurvedLauncher",
   "AmmoType": [
     {
-      "Ammo": "sbwarmory:cluster_grenade",
+      "Ammo": "sbwarmory:cluster_grenade_ammo",
       "AmmoSlot": "Explosive",
       "Projectile": "sbwarmory:cluster_grenade"
     },
     {
-      "Ammo": "sbwarmory:smoke_cluster_grenade",
+      "Ammo": "sbwarmory:cluster_smoke_ammo",
       "AmmoSlot": "Smoke",
       "Projectile": "sbwarmory:smoke_cluster_grenade",
       "Override": {

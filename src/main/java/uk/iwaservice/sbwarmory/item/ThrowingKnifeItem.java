@@ -53,7 +53,7 @@ public class ThrowingKnifeItem extends Item implements GeoItem {
                     .headShot(HEADSHOT_MULTIPLIER)
                     .legShot(1f)
                     .velocity(VELOCITY);
-            knife.setGravity(0f);
+            knife.setCustomGravity(0f);
             knife.setPos(player.getX(), player.getEyeY() - 0.1, player.getZ());
             knife.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, VELOCITY, INACCURACY);
             level.addFreshEntity(knife);

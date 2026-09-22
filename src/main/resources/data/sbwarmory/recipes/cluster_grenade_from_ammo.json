@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    { "item": "sbwarmory:cluster_grenade_ammo" },
+    { "item": "minecraft:gunpowder" }
+  ],
+  "result": {
+    "item": "sbwarmory:cluster_grenade",
+    "count": 1
+  }
+}

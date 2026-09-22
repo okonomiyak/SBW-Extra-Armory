@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "minecraft:spyglass"
+    },
+    {
+      "item": "superbwarfare:large_anti_ground_missile"
+    }
+  ],
+  "result": {
+    "item": "sbwarmory:laser_designator",
+    "count": 1
+  }
+}

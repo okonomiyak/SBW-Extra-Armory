@@ -1,7 +1,10 @@
 package uk.iwaservice.sbwarmory;
 
+import uk.iwaservice.sbwarmory.network.ModNetworking;
 import com.mojang.logging.LogUtils;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig.Type;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 
@@ -14,5 +17,7 @@ public class SbwArmoryMod {
     public SbwArmoryMod() {
         var modBus = FMLJavaModLoadingContext.get().getModEventBus();
         ModRegistry.register(modBus);
+        ModNetworking.register();
+        ModLoadingContext.get().registerConfig(Type.SERVER, uk.iwaservice.sbwarmory.ModConfig.SPEC);
     }
 }

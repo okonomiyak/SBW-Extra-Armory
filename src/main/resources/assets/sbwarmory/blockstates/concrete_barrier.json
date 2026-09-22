@@ -1,0 +1,18 @@
+{
+  "variants": {
+    "axis=z,top=false": {
+      "model": "sbwarmory:block/concrete_barrier_base"
+    },
+    "axis=z,top=true": {
+      "model": "sbwarmory:block/concrete_barrier_top"
+    },
+    "axis=x,top=false": {
+      "model": "sbwarmory:block/concrete_barrier_base",
+      "y": 90
+    },
+    "axis=x,top=true": {
+      "model": "sbwarmory:block/concrete_barrier_top",
+      "y": 90
+    }
+  }
+}

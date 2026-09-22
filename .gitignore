@@ -29,3 +29,6 @@ bin/
 
 # other
 logs/
+
+# local-only notes
+/HANDOVER.md

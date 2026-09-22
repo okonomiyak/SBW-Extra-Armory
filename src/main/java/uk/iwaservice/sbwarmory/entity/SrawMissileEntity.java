@@ -25,7 +25,7 @@ public class SrawMissileEntity extends GunGrenadeEntity {
 
     public SrawMissileEntity(Entity shooter, Level level, float damage, float explosionDamage, float explosionRadius) {
         super(shooter, level, damage, explosionDamage, explosionRadius);
-        setGravity(0f);
+        setCustomGravity(0f);
     }
 
     @Override

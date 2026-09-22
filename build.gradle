@@ -58,11 +58,16 @@ repositories {
         name = 'KotlinForForge'
         url = 'https://thedarkcolour.github.io/KotlinForForge/'
     }
+    maven {
+        name = 'Modrinth'
+        url = 'https://api.modrinth.com/maven'
+        content { includeGroup 'maven.modrinth' }
+    }
 }
 
 dependencies {
     // Hard dependency: SmokeClusterGrenadeEntity extends SuperbWarfare's GunGrenadeEntity directly.
-    modImplementation 'curse.maven:superb-warfare-1218165:8104849'
+    modImplementation 'curse.maven:superb-warfare-1218165:8689629' // 0.8.9.1-hotfix
 
     // GrenadeCarbineItem/GrenadeCarbineItemModel compile directly against GeckoLib's renderer API.
     modImplementation 'curse.maven:geckolib-388172:8285794'
@@ -71,4 +76,7 @@ dependencies {
     // so the dev client/server needs them listed explicitly to boot.
     modRuntimeOnly 'thedarkcolour:kotlinforforge:4.12.0'
     modRuntimeOnly 'curse.maven:curios-309927:6418456'
+
+    // Dev-only convenience: browse items/recipes in the dev client.
+    modRuntimeOnly 'maven.modrinth:u6dRKJwZ:MdKE2PdF' // JEI 15.20.0.128
 }

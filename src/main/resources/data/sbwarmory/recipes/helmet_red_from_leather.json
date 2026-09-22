@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    { "item": "minecraft:leather_helmet" },
+    { "item": "minecraft:red_dye" }
+  ],
+  "result": {
+    "item": "sbwarmory:helmet_red",
+    "count": 1
+  }
+}

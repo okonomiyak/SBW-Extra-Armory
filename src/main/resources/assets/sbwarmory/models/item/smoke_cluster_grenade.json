@@ -1,6 +1,15 @@
 {
-  "parent": "minecraft:item/generated",
+  "base": {
+    "parent": "sbwarmory:item/smoke_cluster_grenade_base"
+  },
+  "gui_light": "front",
+  "loader": "forge:separate_transforms",
+  "perspectives": {
+    "gui": {
+      "parent": "sbwarmory:item/smoke_cluster_grenade_icon"
+    }
+  },
   "textures": {
-    "layer0": "sbwarmory:item/smoke_cluster_grenade"
+    "particle": "sbwarmory:item/smoke_cluster_grenade_icon"
   }
 }
