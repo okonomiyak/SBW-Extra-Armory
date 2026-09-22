@@ -19,7 +19,7 @@ import net.minecraft.world.phys.HitResult;
  * point, hovers out of sight for a few seconds, then falls straight down and hits a wide area with
  * damage (falling off with distance) rather than actually destroying blocks of terrain.
  */
-public class CruiseMissileEntity extends GunGrenadeEntity {
+public class CruiseMissileEntity extends GunGrenadeEntity implements GuidedMissile {
 
     private static final int SIREN_DELAY_TICKS = 30; // starts 1.5s after launch
 

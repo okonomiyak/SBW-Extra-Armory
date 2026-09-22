@@ -18,6 +18,8 @@
   "item.sbwarmory.beast_missile_designator": "Beast Missile Designator",
   "entity.sbwarmory.beast_missile": "Beast Missile",
   "chat.sbwarmory.beast_missile_inbound": "§c§lBeast missile inbound!",
+  "item.sbwarmory.active_defense_system": "Active Defense System",
+  "entity.sbwarmory.active_defense_system": "Active Defense System",
   "item.sbwarmory.night_vision_goggles": "Night Vision Goggles",
   "item.sbwarmory.night_vision_goggles_red": "Night Vision Goggles (Red)",
   "item.sbwarmory.helmet_blue": "Helmet (Blue)",

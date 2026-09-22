@@ -16,6 +16,10 @@ public final class ModConfig {
     public static final ForgeConfigSpec.IntValue CRUISE_MISSILE_WARMUP_SECONDS;
     public static final ForgeConfigSpec.DoubleValue CRUISE_MISSILE_FALL_SPEED;
 
+    public static final ForgeConfigSpec.DoubleValue ACTIVE_DEFENSE_RADIUS;
+    public static final ForgeConfigSpec.IntValue ACTIVE_DEFENSE_COOLDOWN_SECONDS;
+    public static final ForgeConfigSpec.IntValue ACTIVE_DEFENSE_HEALTH;
+
     static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
 
@@ -41,6 +45,18 @@ public final class ModConfig {
         CRUISE_MISSILE_FALL_SPEED = builder
                 .comment("Fall speed in blocks/tick once the warmup ends.")
                 .defineInRange("fallSpeed", 4.0, 0.1, 100.0);
+        builder.pop();
+
+        builder.push("activeDefenseSystem");
+        ACTIVE_DEFENSE_RADIUS = builder
+                .comment("Detection radius in blocks - grenades entering this range are intercepted.")
+                .defineInRange("radius", 5.0, 1.0, 100.0);
+        ACTIVE_DEFENSE_COOLDOWN_SECONDS = builder
+                .comment("Seconds between interceptions - only one grenade can be shot down per cooldown window.")
+                .defineInRange("cooldownSeconds", 5, 0, 3600);
+        ACTIVE_DEFENSE_HEALTH = builder
+                .comment("Hit points of the placed device itself - it's fragile by design.")
+                .defineInRange("health", 1, 1, 1000);
         builder.pop();
 
         SIREN_VOLUME = builder

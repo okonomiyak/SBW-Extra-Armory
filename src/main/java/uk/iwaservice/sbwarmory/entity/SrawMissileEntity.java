@@ -13,7 +13,7 @@ import net.minecraft.world.phys.Vec3;
  * Renders with SuperbWarfare's own default {@code BasicProjectileRenderer} appearance in flight (no
  * custom mesh/orientation tuning) - the custom sraw_missile model is only used for the held ammo item.
  */
-public class SrawMissileEntity extends GunGrenadeEntity {
+public class SrawMissileEntity extends GunGrenadeEntity implements GuidedMissile {
 
     private static final int GUIDANCE_START_DELAY_TICKS = 5;
     private static final double GUIDANCE_AIM_DISTANCE = 64.0;

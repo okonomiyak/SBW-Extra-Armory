@@ -1,6 +1,7 @@
 package uk.iwaservice.sbwarmory;
 
 import com.atsuishio.superbwarfare.client.renderer.projectile.BasicProjectileRenderer;
+import uk.iwaservice.sbwarmory.client.ActiveDefenseSystemRenderer;
 import uk.iwaservice.sbwarmory.client.MushroomCloudEntityRenderer;
 import uk.iwaservice.sbwarmory.client.MushroomPuffParticle;
 import uk.iwaservice.sbwarmory.client.RockDebrisParticle;
@@ -26,6 +27,7 @@ public final class ClientModEvents {
         event.registerEntityRenderer(ModRegistry.CRUISE_MISSILE.get(), BasicProjectileRenderer::new);
         event.registerEntityRenderer(ModRegistry.BEAST_MISSILE.get(), BasicProjectileRenderer::new);
         event.registerEntityRenderer(ModRegistry.MUSHROOM_CLOUD.get(), MushroomCloudEntityRenderer::new);
+        event.registerEntityRenderer(ModRegistry.ACTIVE_DEFENSE_SYSTEM.get(), ActiveDefenseSystemRenderer::new);
     }
 
     @SubscribeEvent

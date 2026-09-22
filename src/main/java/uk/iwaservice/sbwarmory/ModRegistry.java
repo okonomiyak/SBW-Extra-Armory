@@ -202,6 +202,18 @@ public final class ModRegistry {
                     .updateInterval(5)
                     .build("beast_missile"));
 
+    public static final RegistryObject<EntityType<uk.iwaservice.sbwarmory.entity.ActiveDefenseSystemEntity>> ACTIVE_DEFENSE_SYSTEM = ENTITY_TYPES.register(
+            "active_defense_system",
+            () -> EntityType.Builder.<uk.iwaservice.sbwarmory.entity.ActiveDefenseSystemEntity>of(
+                            uk.iwaservice.sbwarmory.entity.ActiveDefenseSystemEntity::new, MobCategory.MISC)
+                    .sized(0.75f, 0.75f)
+                    .clientTrackingRange(10)
+                    .updateInterval(20)
+                    .build("active_defense_system"));
+
+    public static final RegistryObject<Item> ACTIVE_DEFENSE_SYSTEM_ITEM = ITEMS.register("active_defense_system",
+            () -> new uk.iwaservice.sbwarmory.item.ActiveDefenseSystemItem(new Item.Properties().stacksTo(1)));
+
     public static final RegistryObject<EntityType<MushroomCloudEntity>> MUSHROOM_CLOUD = ENTITY_TYPES.register(
             "mushroom_cloud",
             () -> EntityType.Builder.<MushroomCloudEntity>of(MushroomCloudEntity::new, MobCategory.MISC)
@@ -227,6 +239,7 @@ public final class ModRegistry {
                 output.accept(SRAW_MISSILE_BLUEPRINT_ITEM.get());
                 output.accept(LASER_DESIGNATOR_ITEM.get());
                 output.accept(BEAST_MISSILE_DESIGNATOR_ITEM.get());
+                output.accept(ACTIVE_DEFENSE_SYSTEM_ITEM.get());
                 output.accept(NIGHT_VISION_GOGGLES_ITEM.get());
                 output.accept(NIGHT_VISION_GOGGLES_RED_ITEM.get());
                 output.accept(HELMET_BLUE_ITEM.get());

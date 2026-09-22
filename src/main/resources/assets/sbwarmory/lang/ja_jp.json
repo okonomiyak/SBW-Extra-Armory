@@ -18,6 +18,8 @@
   "item.sbwarmory.beast_missile_designator": "野獣ミサイル指示機",
   "entity.sbwarmory.beast_missile": "野獣ミサイル",
   "chat.sbwarmory.beast_missile_inbound": "§c§l野獣ミサイル接近中！",
+  "item.sbwarmory.active_defense_system": "アクティブ防御システム",
+  "entity.sbwarmory.active_defense_system": "アクティブ防御システム",
   "item.sbwarmory.night_vision_goggles": "暗視ゴーグル",
   "item.sbwarmory.night_vision_goggles_red": "暗視ゴーグル(赤)",
   "item.sbwarmory.helmet_blue": "ヘルメット(青)",
