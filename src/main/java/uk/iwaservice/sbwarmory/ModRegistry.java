@@ -22,6 +22,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.BlockItem;
@@ -49,6 +50,19 @@ public final class ModRegistry {
             DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, SbwArmoryMod.MODID);
     public static final DeferredRegister<SoundEvent> SOUND_EVENTS =
             DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, SbwArmoryMod.MODID);
+    public static final DeferredRegister<MobEffect> MOB_EFFECTS =
+            DeferredRegister.create(ForgeRegistries.MOB_EFFECTS, SbwArmoryMod.MODID);
+
+    public static final RegistryObject<MobEffect> COMA = MOB_EFFECTS.register("coma",
+            uk.iwaservice.sbwarmory.effect.ComaMobEffect::new);
+
+    public static final RegistryObject<Item> ICED_TEA_ITEM = ITEMS.register("iced_tea",
+            () -> new Item(new Item.Properties().food(new net.minecraft.world.food.FoodProperties.Builder()
+                    .nutrition(2)
+                    .saturationMod(0.2f)
+                    .effect(() -> new net.minecraft.world.effect.MobEffectInstance(COMA.get(), 200, 0), 1.0F)
+                    .fast()
+                    .build())));
 
     public static final RegistryObject<SimpleParticleType> MUSHROOM_PUFF = PARTICLE_TYPES.register("mushroom_puff",
             () -> new SimpleParticleType(false));
@@ -125,6 +139,18 @@ public final class ModRegistry {
 
     public static final RegistryObject<Item> SPRING_GRENADE_ITEM = ITEMS.register("spring_grenade",
             () -> new SpringGrenadeItem(new Item.Properties().stacksTo(16)));
+
+    public static final RegistryObject<EntityType<uk.iwaservice.sbwarmory.entity.ComaGrenadeEntity>> COMA_GRENADE = ENTITY_TYPES.register(
+            "coma_grenade",
+            () -> EntityType.Builder.<uk.iwaservice.sbwarmory.entity.ComaGrenadeEntity>of(
+                            uk.iwaservice.sbwarmory.entity.ComaGrenadeEntity::new, MobCategory.MISC)
+                    .sized(0.2f, 0.2f)
+                    .clientTrackingRange(4)
+                    .updateInterval(10)
+                    .build("coma_grenade"));
+
+    public static final RegistryObject<Item> COMA_GRENADE_ITEM = ITEMS.register("coma_grenade",
+            () -> new uk.iwaservice.sbwarmory.item.ComaGrenadeItem(new Item.Properties().stacksTo(16)));
 
     public static final RegistryObject<Item> SRAW_LAUNCHER_ITEM = ITEMS.register("sraw_launcher",
             SrawLauncherItem::new);
@@ -240,6 +266,8 @@ public final class ModRegistry {
                 output.accept(LASER_DESIGNATOR_ITEM.get());
                 output.accept(BEAST_MISSILE_DESIGNATOR_ITEM.get());
                 output.accept(ACTIVE_DEFENSE_SYSTEM_ITEM.get());
+                output.accept(ICED_TEA_ITEM.get());
+                output.accept(COMA_GRENADE_ITEM.get());
                 output.accept(NIGHT_VISION_GOGGLES_ITEM.get());
                 output.accept(NIGHT_VISION_GOGGLES_RED_ITEM.get());
                 output.accept(HELMET_BLUE_ITEM.get());
@@ -256,6 +284,7 @@ public final class ModRegistry {
         TABS.register(modBus);
         PARTICLE_TYPES.register(modBus);
         SOUND_EVENTS.register(modBus);
+        MOB_EFFECTS.register(modBus);
     }
 
     private ModRegistry() {}

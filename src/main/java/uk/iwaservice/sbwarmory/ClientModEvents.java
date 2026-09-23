@@ -2,6 +2,7 @@ package uk.iwaservice.sbwarmory;
 
 import com.atsuishio.superbwarfare.client.renderer.projectile.BasicProjectileRenderer;
 import uk.iwaservice.sbwarmory.client.ActiveDefenseSystemRenderer;
+import uk.iwaservice.sbwarmory.client.ComaGrenadeEntityRenderer;
 import uk.iwaservice.sbwarmory.client.MushroomCloudEntityRenderer;
 import uk.iwaservice.sbwarmory.client.MushroomPuffParticle;
 import uk.iwaservice.sbwarmory.client.RockDebrisParticle;
@@ -22,6 +23,7 @@ public final class ClientModEvents {
         event.registerEntityRenderer(ModRegistry.SMOKE_CLUSTER_GRENADE.get(), BasicProjectileRenderer::new);
         event.registerEntityRenderer(ModRegistry.CLUSTER_GRENADE.get(), BasicProjectileRenderer::new);
         event.registerEntityRenderer(ModRegistry.SPRING_GRENADE.get(), SpringGrenadeEntityRenderer::new);
+        event.registerEntityRenderer(ModRegistry.COMA_GRENADE.get(), ComaGrenadeEntityRenderer::new);
         event.registerEntityRenderer(ModRegistry.THROWING_KNIFE.get(), ThrowingKnifeEntityRenderer::new);
         event.registerEntityRenderer(ModRegistry.SRAW_MISSILE.get(), BasicProjectileRenderer::new);
         event.registerEntityRenderer(ModRegistry.CRUISE_MISSILE.get(), BasicProjectileRenderer::new);
