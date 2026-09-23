@@ -5,8 +5,16 @@ import uk.iwaservice.sbwarmory.item.NightVisionGogglesItem;
 import uk.iwaservice.sbwarmory.network.FireCruiseMissilePacket;
 import uk.iwaservice.sbwarmory.network.ModNetworking;
 import uk.iwaservice.sbwarmory.network.ToggleNightVisionPacket;
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.BufferUploader;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -19,6 +27,7 @@ import net.minecraftforge.client.event.ViewportEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 
 /** Forge-bus client events (as opposed to {@link ClientModEvents}, which needs the mod bus). */
@@ -34,13 +43,6 @@ public final class ClientForgeEvents {
             new ResourceLocation("superbwarfare", "textures/overlay/spyglass/spyglass.png");
     private static final float SCOPE_SCALE = 1.35F;
     private static final float SCOPE_ASPECT = 21F / 9F; // the source texture is a wide oval, not square
-
-    // A flat translucent green fill over the whole HUD layer instead of a vanilla PostChain
-    // (GameRenderer#loadEffect) shader - PostChain effects are notoriously unreliable under
-    // rendering-optimization mods (Rubidium/Oculus and friends silently drop them even without an
-    // active shaderpack), while HUD-layer draws use the same path as our own scope vignette below
-    // and are unaffected by any of that.
-    private static final int NIGHT_VISION_TINT = 0x5000FF00;
 
     private static double zoomLevel = MIN_ZOOM;
     private static int fireHoldTicks = 0;
@@ -73,6 +75,28 @@ public final class ClientForgeEvents {
         return head.getItem() instanceof NightVisionGogglesItem && NightVisionGogglesItem.isActive(head);
     }
 
+    /**
+     * Multiplies the already-rendered scene by pure green (DST_COLOR * ZERO blend) instead of just
+     * alpha-blending a green haze on top - this keeps each pixel's own brightness (via its green
+     * channel) while zeroing red/blue, giving the grayscale-into-green "thermal/FLIR" look real NVG
+     * footage has, rather than a flat tinted fog. GuiGraphics#fill always resets to the default alpha
+     * blend func internally, so this bypasses it and draws the quad directly.
+     */
+    private static void drawGreenMultiplyOverlay(GuiGraphics graphics, int x1, int y1, int x2, int y2) {
+        RenderSystem.enableBlend();
+        RenderSystem.blendFunc(GlStateManager.SourceFactor.DST_COLOR, GlStateManager.DestFactor.ZERO);
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        Matrix4f matrix = graphics.pose().last().pose();
+        BufferBuilder buffer = Tesselator.getInstance().getBuilder();
+        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+        buffer.vertex(matrix, x1, y2, 0).color(0, 255, 0, 255).endVertex();
+        buffer.vertex(matrix, x2, y2, 0).color(0, 255, 0, 255).endVertex();
+        buffer.vertex(matrix, x2, y1, 0).color(0, 255, 0, 255).endVertex();
+        buffer.vertex(matrix, x1, y1, 0).color(0, 255, 0, 255).endVertex();
+        BufferUploader.drawWithShader(buffer.end());
+        RenderSystem.defaultBlendFunc();
+    }
+
     @SubscribeEvent
     public static void onComputeFov(ViewportEvent.ComputeFov event) {
         if (aimingStack(Minecraft.getInstance().player) == null) {
@@ -90,7 +114,7 @@ public final class ClientForgeEvents {
         int screenHeight = mc.getWindow().getGuiScaledHeight();
 
         if (wearingActiveGoggles(player) && mc.options.getCameraType().isFirstPerson()) {
-            graphics.fill(0, 0, screenWidth, screenHeight, NIGHT_VISION_TINT);
+            drawGreenMultiplyOverlay(graphics, 0, 0, screenWidth, screenHeight);
         }
 
         if (aimingStack(player) == null) {
