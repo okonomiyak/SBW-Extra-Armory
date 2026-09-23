@@ -35,11 +35,12 @@ public final class ClientForgeEvents {
     private static final float SCOPE_SCALE = 1.35F;
     private static final float SCOPE_ASPECT = 21F / 9F; // the source texture is a wide oval, not square
 
-    // Our own shader: vanilla's built-in "green" effect (zero red/blue, keep only green - the classic
-    // NVG monochrome look) minus its "bits" pass, which posterizes/mosaics the image and looked too
-    // coarse/blocky for this.
-    private static final ResourceLocation NIGHT_VISION_SHADER =
-            new ResourceLocation(SbwArmoryMod.MODID, "shaders/post/night_vision.json");
+    // A flat translucent green fill over the whole HUD layer instead of a vanilla PostChain
+    // (GameRenderer#loadEffect) shader - PostChain effects are notoriously unreliable under
+    // rendering-optimization mods (Rubidium/Oculus and friends silently drop them even without an
+    // active shaderpack), while HUD-layer draws use the same path as our own scope vignette below
+    // and are unaffected by any of that.
+    private static final int NIGHT_VISION_TINT = 0x5000FF00;
 
     private static double zoomLevel = MIN_ZOOM;
     private static int fireHoldTicks = 0;
@@ -47,7 +48,6 @@ public final class ClientForgeEvents {
     // Cancelling the Pre event below stops vanilla's KeyMapping from ever seeing the press, so
     // keyAttack.isDown() would never go true - track the raw button state ourselves instead.
     private static boolean leftMouseHeld = false;
-    private static boolean nightVisionShaderActive = false;
 
     /** The player's currently-held {@link LaserDesignatorItem} stack while it's toggled to aim, or null. */
     private static ItemStack aimingStack(Player player) {
@@ -85,13 +85,17 @@ public final class ClientForgeEvents {
     public static void onRenderGui(RenderGuiEvent.Post event) {
         Minecraft mc = Minecraft.getInstance();
         Player player = mc.player;
-        if (aimingStack(player) == null) {
-            return;
-        }
-
         GuiGraphics graphics = event.getGuiGraphics();
         int screenWidth = mc.getWindow().getGuiScaledWidth();
         int screenHeight = mc.getWindow().getGuiScaledHeight();
+
+        if (wearingActiveGoggles(player) && mc.options.getCameraType().isFirstPerson()) {
+            graphics.fill(0, 0, screenWidth, screenHeight, NIGHT_VISION_TINT);
+        }
+
+        if (aimingStack(player) == null) {
+            return;
+        }
 
         // Wide oval scope mask, same shape/texture SuperbWarfare's own spyglass and artillery
         // indicator use. Passing the draw size as the "texture size" too forces a full 0-1 UV
@@ -152,17 +156,6 @@ public final class ClientForgeEvents {
             return;
         }
         Minecraft mc = Minecraft.getInstance();
-
-        boolean wantsNightVisionShader = wearingActiveGoggles(mc.player) && mc.options.getCameraType().isFirstPerson();
-        if (wantsNightVisionShader) {
-            // Reasserted every tick (not just on the on/off edge): something else touching the
-            // current post-process effect slot (another mod, or vanilla's own effect handling) can
-            // silently knock ours out without notifying us, which left it stuck off on some setups.
-            mc.gameRenderer.loadEffect(NIGHT_VISION_SHADER);
-        } else if (nightVisionShaderActive) {
-            mc.gameRenderer.shutdownEffect();
-        }
-        nightVisionShaderActive = wantsNightVisionShader;
 
         if (mc.player != null && mc.player.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.HEAD).getItem()
                 instanceof NightVisionGogglesItem) {
