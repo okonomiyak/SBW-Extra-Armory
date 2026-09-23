@@ -69,7 +69,15 @@ public class NightVisionGogglesItem extends ArmorItem implements GeoItem {
         return cache;
     }
 
-    /** Overridden by color variants to swap in their own renderer without repeating the plumbing below. */
+    /**
+     * Overridden by color variants to swap in their own renderer without repeating the plumbing below.
+     * {@code @OnlyIn(Dist.CLIENT)} is required here (not just on the anonymous class's override below) -
+     * without it, this method's signature (returning the client-only GeoArmorRenderer/HumanoidModel)
+     * is baked into NightVisionGogglesItem's own class file and crashes dedicated servers the moment
+     * the item is constructed during registration, before Forge's RuntimeDistCleaner gets a chance to
+     * strip it.
+     */
+    @OnlyIn(Dist.CLIENT)
     protected GeoArmorRenderer<NightVisionGogglesItem> createRenderer() {
         return new NightVisionGogglesRenderer();
     }
