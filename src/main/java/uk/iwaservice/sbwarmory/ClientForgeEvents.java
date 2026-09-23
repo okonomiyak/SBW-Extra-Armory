@@ -154,14 +154,15 @@ public final class ClientForgeEvents {
         Minecraft mc = Minecraft.getInstance();
 
         boolean wantsNightVisionShader = wearingActiveGoggles(mc.player) && mc.options.getCameraType().isFirstPerson();
-        if (wantsNightVisionShader != nightVisionShaderActive) {
-            if (wantsNightVisionShader) {
-                mc.gameRenderer.loadEffect(NIGHT_VISION_SHADER);
-            } else {
-                mc.gameRenderer.shutdownEffect();
-            }
-            nightVisionShaderActive = wantsNightVisionShader;
+        if (wantsNightVisionShader) {
+            // Reasserted every tick (not just on the on/off edge): something else touching the
+            // current post-process effect slot (another mod, or vanilla's own effect handling) can
+            // silently knock ours out without notifying us, which left it stuck off on some setups.
+            mc.gameRenderer.loadEffect(NIGHT_VISION_SHADER);
+        } else if (nightVisionShaderActive) {
+            mc.gameRenderer.shutdownEffect();
         }
+        nightVisionShaderActive = wantsNightVisionShader;
 
         if (mc.player != null && mc.player.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.HEAD).getItem()
                 instanceof NightVisionGogglesItem) {
