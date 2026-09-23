@@ -25,7 +25,7 @@ description='''SuperbWarfare addon adding extra weapons: cluster/smoke/spring gr
 [[dependencies.sbwarmory]]
     modId="superbwarfare"
     mandatory=true
-    versionRange="[0.8.9.1,)"
+    versionRange="[0.8.9.0,)"
     ordering="AFTER"
     side="BOTH"
 

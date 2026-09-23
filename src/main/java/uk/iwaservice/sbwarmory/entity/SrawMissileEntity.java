@@ -25,7 +25,7 @@ public class SrawMissileEntity extends GunGrenadeEntity implements GuidedMissile
 
     public SrawMissileEntity(Entity shooter, Level level, float damage, float explosionDamage, float explosionRadius) {
         super(shooter, level, damage, explosionDamage, explosionRadius);
-        setCustomGravity(0f);
+        setGravity(0f); // superbwarfare:setGravity - renamed to setCustomGravity in 0.8.9.1+
     }
 
     @Override

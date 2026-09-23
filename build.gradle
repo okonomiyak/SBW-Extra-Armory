@@ -67,7 +67,7 @@ repositories {
 
 dependencies {
     // Hard dependency: SmokeClusterGrenadeEntity extends SuperbWarfare's GunGrenadeEntity directly.
-    modImplementation 'curse.maven:superb-warfare-1218165:8689629' // 0.8.9.1-hotfix
+    modImplementation 'curse.maven:superb-warfare-1218165:8104849' // 0.8.9.0
 
     // GrenadeCarbineItem/GrenadeCarbineItemModel compile directly against GeckoLib's renderer API.
     modImplementation 'curse.maven:geckolib-388172:8285794'

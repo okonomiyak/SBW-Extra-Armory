@@ -46,7 +46,7 @@ public class CruiseMissileEntity extends GunGrenadeEntity implements GuidedMissi
         this.fallSpeed = uk.iwaservice.sbwarmory.ModConfig.CRUISE_MISSILE_FALL_SPEED.get() / flightTimeScale();
         this.damageHalfWidth = uk.iwaservice.sbwarmory.ModConfig.CRUISE_MISSILE_FOOTPRINT.get() / 2.0;
         this.damageHalfHeight = uk.iwaservice.sbwarmory.ModConfig.CRUISE_MISSILE_HEIGHT.get() / 2.0;
-        setCustomGravity(0f);
+        setGravity(0f); // superbwarfare:setGravity - renamed to setCustomGravity in 0.8.9.1+
         setDeltaMovement(0, 0, 0);
         // Bypass the base class's own collision handling entirely (it would otherwise trigger its
         // own zero-power explosion the moment we physically touch a block during the fall).
