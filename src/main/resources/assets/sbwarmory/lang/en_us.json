@@ -35,6 +35,8 @@
   "item.sbwarmory.infinite_ammo_box.tooltip_switch": "Pick it up and click an ammo item to set its type.",
   "item.sbwarmory.vehicle_ammo_box": "Vehicle Ammo Box",
   "item.sbwarmory.vehicle_ammo_box.tooltip": "Just carry it - keeps any vehicle you're riding fully loaded (weapons + decoys).",
+  "item.sbwarmory.vehicle_battery_pack": "Vehicle Battery Pack",
+  "item.sbwarmory.vehicle_battery_pack.tooltip": "Just carry it - keeps any vehicle you're riding fully charged.",
   "entity.sbwarmory.cruise_missile": "Cruise Missile",
   "itemGroup.sbwarmory": "SBW Extra Armory",
   "hud.sbwarmory.distance": "Distance",

@@ -35,6 +35,8 @@
   "item.sbwarmory.infinite_ammo_box.tooltip_switch": "つまんで弾薬アイテムをクリックすると弾種を設定。",
   "item.sbwarmory.vehicle_ammo_box": "ビークル無限弾薬箱",
   "item.sbwarmory.vehicle_ammo_box.tooltip": "持っているだけで乗ってる乗り物の武器・デコイが常に満タン。",
+  "item.sbwarmory.vehicle_battery_pack": "無限給電バッテリーパック",
+  "item.sbwarmory.vehicle_battery_pack.tooltip": "持っているだけで乗ってる乗り物の電力が常に満タン。",
   "entity.sbwarmory.cruise_missile": "巡航ミサイル",
   "itemGroup.sbwarmory": "SBW Extra Armory",
   "hud.sbwarmory.distance": "距離",
