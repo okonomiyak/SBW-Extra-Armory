@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "superbwarfare:item/creative_vehicle_key"
+    "layer0": "sbwarmory:item/vehicle_ammo_box"
   }
 }

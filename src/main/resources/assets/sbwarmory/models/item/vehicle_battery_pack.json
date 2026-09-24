@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "superbwarfare:item/large_battery_pack"
+    "layer0": "sbwarmory:item/vehicle_battery_pack"
   }
 }
