@@ -240,6 +240,9 @@ public final class ModRegistry {
     public static final RegistryObject<Item> ACTIVE_DEFENSE_SYSTEM_ITEM = ITEMS.register("active_defense_system",
             () -> new uk.iwaservice.sbwarmory.item.ActiveDefenseSystemItem(new Item.Properties().stacksTo(1)));
 
+    public static final RegistryObject<Item> INFINITE_AMMO_BOX_ITEM = ITEMS.register("infinite_ammo_box",
+            () -> new uk.iwaservice.sbwarmory.item.InfiniteAmmoBoxItem(new Item.Properties().stacksTo(1)));
+
     public static final RegistryObject<EntityType<MushroomCloudEntity>> MUSHROOM_CLOUD = ENTITY_TYPES.register(
             "mushroom_cloud",
             () -> EntityType.Builder.<MushroomCloudEntity>of(MushroomCloudEntity::new, MobCategory.MISC)
@@ -274,6 +277,7 @@ public final class ModRegistry {
                 output.accept(HELMET_RED_ITEM.get());
                 output.accept(CONCRETE_BARRIER_ITEM.get());
                 output.accept(CONCRETE_BLOCK_ITEM.get());
+                output.accept(INFINITE_AMMO_BOX_ITEM.get());
             })
             .build());
 
