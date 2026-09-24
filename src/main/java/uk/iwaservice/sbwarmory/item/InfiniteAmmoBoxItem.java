@@ -6,6 +6,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -15,8 +16,10 @@ import net.minecraft.world.level.Level;
 import java.util.List;
 
 /**
- * Right-click: refills the wielder's SuperbWarfare ammo pool for one selected {@link Ammo} type to
- * its cap, without ever being consumed. Sneak-right-click cycles which type it's set to.
+ * Just having this anywhere in the inventory (not even in hand) keeps the owner's SuperbWarfare
+ * ammo pool for one selected {@link Ammo} type topped up to its cap every tick - same "just carry
+ * it" behavior as SBW's own Creative Ammo Box, but scoped to a single chosen ammo type instead of
+ * all of them. Sneak-right-click cycles which type it's set to.
  */
 public class InfiniteAmmoBoxItem extends Item {
 
@@ -42,21 +45,31 @@ public class InfiniteAmmoBoxItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-
-        if (player.isShiftKeyDown()) {
-            if (!level.isClientSide) {
-                Ammo next = TYPES[(typeOf(stack).ordinal() + 1) % TYPES.length];
-                stack.getOrCreateTag().putString(TAG_TYPE, next.name());
-                player.displayClientMessage(Component.translatable(next.translationKey).withStyle(next.color), true);
-            }
-            return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
+        if (!player.isShiftKeyDown()) {
+            return InteractionResultHolder.pass(stack);
         }
-
         if (!level.isClientSide) {
-            Ammo type = typeOf(stack);
-            type.set(player, type.getLimit());
+            Ammo next = TYPES[(typeOf(stack).ordinal() + 1) % TYPES.length];
+            stack.getOrCreateTag().putString(TAG_TYPE, next.name());
+            player.displayClientMessage(Component.translatable(next.translationKey).withStyle(next.color), true);
         }
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
+    }
+
+    /**
+     * Fires for every stack in the inventory each tick, not just the one held - same as SBW's own
+     * check. Guarded by get() so set() (which syncs the whole ammo capability) only actually runs
+     * on the tick something drops below the cap, not every tick regardless.
+     */
+    @Override
+    public void inventoryTick(ItemStack stack, Level level, Entity entity, int slot, boolean selected) {
+        if (level.isClientSide || !(entity instanceof Player player)) {
+            return;
+        }
+        Ammo type = typeOf(stack);
+        if (type.get(player) < type.getLimit()) {
+            type.set(player, type.getLimit());
+        }
     }
 
     @Override
@@ -64,5 +77,6 @@ public class InfiniteAmmoBoxItem extends Item {
         Ammo type = typeOf(stack);
         tooltip.add(Component.translatable(type.translationKey).withStyle(type.color));
         tooltip.add(Component.translatable("item.sbwarmory.infinite_ammo_box.tooltip").withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("item.sbwarmory.infinite_ammo_box.tooltip_switch").withStyle(ChatFormatting.DARK_GRAY));
     }
 }
