@@ -31,7 +31,7 @@
   "block.sbwarmory.concrete_barrier": "コンクリートバリア",
   "block.sbwarmory.concrete_block": "コンクリートブロック",
   "item.sbwarmory.infinite_ammo_box": "無限弾薬箱",
-  "item.sbwarmory.infinite_ammo_box.tooltip": "持っているだけでこの弾種が常に満タンになる。",
+  "item.sbwarmory.infinite_ammo_box.tooltip": "持っているだけでこの弾種が常に満タン。乗ってる乗り物の武器も常に弾込め済みに。",
   "item.sbwarmory.infinite_ammo_box.tooltip_switch": "シフト+右クリック: 弾種切り替え。",
   "entity.sbwarmory.cruise_missile": "巡航ミサイル",
   "itemGroup.sbwarmory": "SBW Extra Armory",

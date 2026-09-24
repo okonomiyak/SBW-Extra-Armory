@@ -1,6 +1,8 @@
 package uk.iwaservice.sbwarmory.item;
 
 import com.atsuishio.superbwarfare.data.gun.Ammo;
+import com.atsuishio.superbwarfare.data.gun.GunProp;
+import com.atsuishio.superbwarfare.entity.vehicle.base.VehicleEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -69,6 +71,26 @@ public class InfiniteAmmoBoxItem extends Item {
         Ammo type = typeOf(stack);
         if (type.get(player) < type.getLimit()) {
             type.set(player, type.getLimit());
+        }
+        topUpVehicleWeapons(player);
+    }
+
+    /**
+     * Vehicle-mounted weapons track their loaded magazine separately from the backpack ammo pool
+     * above (SuperbWarfare's own GunData per weapon slot, not the player's Ammo capability), so this
+     * tops each of the current vehicle's weapons back up to its magazine capacity too.
+     */
+    private static void topUpVehicleWeapons(Player player) {
+        if (!(player.getVehicle() instanceof VehicleEntity vehicle)) {
+            return;
+        }
+        for (String weapon : vehicle.getGunDataMap().keySet()) {
+            vehicle.modifyGunData(weapon, gunData -> {
+                int magazine = gunData.get(GunProp.MAGAZINE);
+                if (gunData.ammo.get() < magazine) {
+                    gunData.ammo.set(magazine);
+                }
+            });
         }
     }
 
