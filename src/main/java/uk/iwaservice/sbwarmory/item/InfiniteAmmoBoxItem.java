@@ -80,10 +80,16 @@ public class InfiniteAmmoBoxItem extends Item {
         topUpVehicleWeapons(player);
     }
 
+    // Weapons with no magazine (MAGAZINE <= 0 - GunData#useBackpackAmmo()) fire straight off
+    // backupAmmoCount instead, which has no capacity prop to read - just force it high.
+    private static final int VEHICLE_BACKUP_AMMO = 999999;
+
     /**
      * Vehicle-mounted weapons track their loaded magazine separately from the backpack ammo pool
      * above (SuperbWarfare's own GunData per weapon slot, not the player's Ammo capability), so this
-     * tops each of the current vehicle's weapons back up to its magazine capacity too.
+     * tops each of the current vehicle's weapons back up too - to its magazine capacity for weapons
+     * that have one, or its backup ammo count (what VehicleEntity#getAmmo actually displays/checks
+     * for those) for weapons that fire straight from reserve instead.
      */
     private static void topUpVehicleWeapons(Player player) {
         if (!(player.getVehicle() instanceof VehicleEntity vehicle)) {
@@ -94,6 +100,9 @@ public class InfiniteAmmoBoxItem extends Item {
                 int magazine = gunData.get(GunProp.MAGAZINE);
                 if (gunData.ammo.get() < magazine) {
                     gunData.ammo.set(magazine);
+                }
+                if (gunData.backupAmmoCount.get() < VEHICLE_BACKUP_AMMO) {
+                    gunData.backupAmmoCount.set(VEHICLE_BACKUP_AMMO);
                 }
             });
         }
