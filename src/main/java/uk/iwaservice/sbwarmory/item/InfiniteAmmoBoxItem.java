@@ -1,8 +1,6 @@
 package uk.iwaservice.sbwarmory.item;
 
 import com.atsuishio.superbwarfare.data.gun.Ammo;
-import com.atsuishio.superbwarfare.data.gun.GunProp;
-import com.atsuishio.superbwarfare.entity.vehicle.base.VehicleEntity;
 import com.atsuishio.superbwarfare.item.ammo.AmmoSupplierItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
@@ -23,7 +21,8 @@ import java.util.List;
  * ammo pool for one selected {@link Ammo} type topped up to its cap every tick - same "just carry
  * it" behavior as SBW's own Creative Ammo Box, but scoped to a single chosen ammo type instead of
  * all of them. Pick which type by picking this stack up (cursor) and clicking any SuperbWarfare
- * ammo/ammo-box item in an inventory slot - same UX as TACZ's own single-type ammo box.
+ * ammo/ammo-box item in an inventory slot - same UX as TACZ's own single-type ammo box. Vehicle
+ * weapon/decoy ammo is handled separately by {@link VehicleAmmoBoxItem}.
  */
 public class InfiniteAmmoBoxItem extends Item {
 
@@ -76,43 +75,6 @@ public class InfiniteAmmoBoxItem extends Item {
         Ammo type = typeOf(stack);
         if (type.get(player) < type.getLimit()) {
             type.set(player, type.getLimit());
-        }
-        topUpVehicleWeapons(player);
-    }
-
-    // Weapons with no magazine (MAGAZINE <= 0 - GunData#useBackpackAmmo()) fire straight off
-    // backupAmmoCount instead, which has no capacity prop to read - just force it high.
-    private static final int VEHICLE_BACKUP_AMMO = 999999;
-
-    /**
-     * Vehicle-mounted weapons and decoy launchers track their ammo entirely separately from the
-     * backpack ammo pool above (SuperbWarfare's own GunData per weapon slot, and a plain synced int
-     * for decoys - not the player's Ammo capability), so this tops each up too: weapon magazine
-     * capacity (or backup ammo count, for weapons that fire straight from reserve instead) per
-     * weapon slot, and decoy count up to its configured magazine size.
-     */
-    private static void topUpVehicleWeapons(Player player) {
-        if (!(player.getVehicle() instanceof VehicleEntity vehicle)) {
-            return;
-        }
-        for (String weapon : vehicle.getGunDataMap().keySet()) {
-            vehicle.modifyGunData(weapon, gunData -> {
-                int magazine = gunData.get(GunProp.MAGAZINE);
-                if (gunData.ammo.get() < magazine) {
-                    gunData.ammo.set(magazine);
-                }
-                if (gunData.backupAmmoCount.get() < VEHICLE_BACKUP_AMMO) {
-                    gunData.backupAmmoCount.set(VEHICLE_BACKUP_AMMO);
-                }
-            });
-        }
-
-        // Smoke/chaff decoy launchers are tracked entirely separately from GunData - a plain
-        // synced int on the vehicle itself, capped by DefaultVehicleData's configured magazine size
-        // (0 for vehicles with no decoy hardware, so this is a no-op for those).
-        int decoyMax = vehicle.computed().getDecoyMagazineSize();
-        if (vehicle.getDecoyCount() < decoyMax) {
-            vehicle.setDecoyCount(decoyMax);
         }
     }
 
