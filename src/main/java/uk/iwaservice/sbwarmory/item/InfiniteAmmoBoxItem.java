@@ -85,11 +85,11 @@ public class InfiniteAmmoBoxItem extends Item {
     private static final int VEHICLE_BACKUP_AMMO = 999999;
 
     /**
-     * Vehicle-mounted weapons track their loaded magazine separately from the backpack ammo pool
-     * above (SuperbWarfare's own GunData per weapon slot, not the player's Ammo capability), so this
-     * tops each of the current vehicle's weapons back up too - to its magazine capacity for weapons
-     * that have one, or its backup ammo count (what VehicleEntity#getAmmo actually displays/checks
-     * for those) for weapons that fire straight from reserve instead.
+     * Vehicle-mounted weapons and decoy launchers track their ammo entirely separately from the
+     * backpack ammo pool above (SuperbWarfare's own GunData per weapon slot, and a plain synced int
+     * for decoys - not the player's Ammo capability), so this tops each up too: weapon magazine
+     * capacity (or backup ammo count, for weapons that fire straight from reserve instead) per
+     * weapon slot, and decoy count up to its configured magazine size.
      */
     private static void topUpVehicleWeapons(Player player) {
         if (!(player.getVehicle() instanceof VehicleEntity vehicle)) {
@@ -105,6 +105,14 @@ public class InfiniteAmmoBoxItem extends Item {
                     gunData.backupAmmoCount.set(VEHICLE_BACKUP_AMMO);
                 }
             });
+        }
+
+        // Smoke/chaff decoy launchers are tracked entirely separately from GunData - a plain
+        // synced int on the vehicle itself, capped by DefaultVehicleData's configured magazine size
+        // (0 for vehicles with no decoy hardware, so this is a no-op for those).
+        int decoyMax = vehicle.computed().getDecoyMagazineSize();
+        if (vehicle.getDecoyCount() < decoyMax) {
+            vehicle.setDecoyCount(decoyMax);
         }
     }
 
