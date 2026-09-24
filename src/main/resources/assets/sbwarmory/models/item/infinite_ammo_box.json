@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "superbwarfare:item/creative_ammo_box"
+    "layer0": "sbwarmory:item/infinite_ammo_box"
   }
 }
