@@ -3,13 +3,14 @@ package uk.iwaservice.sbwarmory.item;
 import com.atsuishio.superbwarfare.data.gun.Ammo;
 import com.atsuishio.superbwarfare.data.gun.GunProp;
 import com.atsuishio.superbwarfare.entity.vehicle.base.VehicleEntity;
+import com.atsuishio.superbwarfare.item.ammo.AmmoSupplierItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ClickAction;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -21,7 +22,8 @@ import java.util.List;
  * Just having this anywhere in the inventory (not even in hand) keeps the owner's SuperbWarfare
  * ammo pool for one selected {@link Ammo} type topped up to its cap every tick - same "just carry
  * it" behavior as SBW's own Creative Ammo Box, but scoped to a single chosen ammo type instead of
- * all of them. Sneak-right-click cycles which type it's set to.
+ * all of them. Pick which type by picking this stack up (cursor) and clicking any SuperbWarfare
+ * ammo/ammo-box item in an inventory slot - same UX as TACZ's own single-type ammo box.
  */
 public class InfiniteAmmoBoxItem extends Item {
 
@@ -44,18 +46,16 @@ public class InfiniteAmmoBoxItem extends Item {
         return TYPES[0];
     }
 
+    /** Pick this stack up (cursor) and click an ammo/ammo-box slot to set the type it distributes. */
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        ItemStack stack = player.getItemInHand(hand);
-        if (!player.isShiftKeyDown()) {
-            return InteractionResultHolder.pass(stack);
+    public boolean overrideStackedOnOther(ItemStack stack, Slot slot, ClickAction action, Player player) {
+        if (action != ClickAction.SECONDARY || !(slot.getItem().getItem() instanceof AmmoSupplierItem supplier)) {
+            return false;
         }
-        if (!level.isClientSide) {
-            Ammo next = TYPES[(typeOf(stack).ordinal() + 1) % TYPES.length];
-            stack.getOrCreateTag().putString(TAG_TYPE, next.name());
-            player.displayClientMessage(Component.translatable(next.translationKey).withStyle(next.color), true);
-        }
-        return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
+        Ammo type = supplier.getType();
+        stack.getOrCreateTag().putString(TAG_TYPE, type.name());
+        player.displayClientMessage(Component.translatable(type.translationKey).withStyle(type.color), true);
+        return true;
     }
 
     /**

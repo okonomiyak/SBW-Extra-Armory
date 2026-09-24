@@ -32,7 +32,7 @@
   "block.sbwarmory.concrete_block": "Concrete Block",
   "item.sbwarmory.infinite_ammo_box": "Infinite Ammo Box",
   "item.sbwarmory.infinite_ammo_box.tooltip": "Just carry it - keeps this ammo type topped up, and any vehicle you're riding fully loaded.",
-  "item.sbwarmory.infinite_ammo_box.tooltip_switch": "Shift+right-click: switch ammo type.",
+  "item.sbwarmory.infinite_ammo_box.tooltip_switch": "Pick it up and click an ammo item to set its type.",
   "entity.sbwarmory.cruise_missile": "Cruise Missile",
   "itemGroup.sbwarmory": "SBW Extra Armory",
   "hud.sbwarmory.distance": "Distance",
