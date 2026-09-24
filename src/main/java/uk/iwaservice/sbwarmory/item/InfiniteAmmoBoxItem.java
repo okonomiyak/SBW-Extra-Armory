@@ -46,10 +46,15 @@ public class InfiniteAmmoBoxItem extends Item {
         return TYPES[0];
     }
 
-    /** Pick this stack up (cursor) and click an ammo/ammo-box slot to set the type it distributes. */
+    /**
+     * Pick this stack up (cursor) and click an ammo/ammo-box slot to set the type it distributes.
+     * Creative-only - this whole item is an admin/cheat tool, and survival players shouldn't be able
+     * to repurpose it as a free ammo-type detector for whatever they're carrying.
+     */
     @Override
     public boolean overrideStackedOnOther(ItemStack stack, Slot slot, ClickAction action, Player player) {
-        if (action != ClickAction.SECONDARY || !(slot.getItem().getItem() instanceof AmmoSupplierItem supplier)) {
+        if (action != ClickAction.SECONDARY || !player.getAbilities().instabuild
+                || !(slot.getItem().getItem() instanceof AmmoSupplierItem supplier)) {
             return false;
         }
         Ammo type = supplier.getType();
