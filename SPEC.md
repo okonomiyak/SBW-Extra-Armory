@@ -1,6 +1,6 @@
 # SBW Extra Armory 仕様書
 
-最終更新: 2026-09-23 (mod_version 0.2.1時点)
+最終更新: 2026-09-25 (mod_version 0.2.2時点、次期0.2.3向け未リリース分を含む)
 
 HANDOVER.md(開発経緯・詰まった箇所のメモ)、README.md(利用者向け概要)とは別に、実装されている全アイテム/エンティティ/エフェクト/設定値を機能単位でまとめた技術仕様書。
 
@@ -87,6 +87,7 @@ HANDOVER.md(開発経緯・詰まった箇所のメモ)、README.md(利用者向
   - `Creeper`(**膨張中**、`getSwellDir() > 0`のみ。ただ近くにいるだけの個体は対象外)
 - 迎撃は`cooldownSeconds`(既定5秒)に1回まで。
 - 装置自体は`health`(既定1)で脆く、`isPickable`/`isAttackable`/`hurt`を実装して殴って壊せる。
+- **ソフト依存対応**: 「LesRaisins Tactical Equipments」(`me.xjqsh.lrtactical`)導入時、そのMod製の投擲グレネード全種(通常/スモーク/スティッキー/スタン/エフェクトクラウド)も迎撃対象になる。`Class.forName("me.xjqsh.lrtactical.entity.ThrowableItemEntity")`(共通基底クラス)をリフレクションで解決する形で、build.gradleに依存追加はしていない(未導入でもクラッシュしない)。爆発後に残るガス雲エンティティ(`SpEffectCloudEntity`、バニラ`AreaEffectCloud`継承)はこの基底を継承しないため、対象から自然に除外される。
 
 ---
 
@@ -97,8 +98,8 @@ HANDOVER.md(開発経緯・詰まった箇所のメモ)、README.md(利用者向
 - GeckoLibの`GeoArmorRenderer`+`armorHead`ボーン(`pivot=[0,24,0]`必須、プレイヤーモデルの頭座標系に合わせる)で専用3Dモデルを描画。5%大きめにスケール(`withScale(1.05F)`)してバニラの頭とのZファイティングを回避。
 - 装備中(頭スロットに入っている間)、`inventoryTick`でバニラ`NIGHT_VISION`効果を継続付与(220tickごとに再付与)。
 - **Nキー**(`ModKeyMappings.TOGGLE_NIGHT_VISION`)でON/OFFトグル可能。NBTの`Active`フラグ(既定true)で管理、`ToggleNightVisionPacket`でサーバーに反映。
-- 緑シェーダー(`assets/sbwarmory/shaders/post/night_vision.json`、バニラ隠しシェーダー`green.json`から粗く見える`bits`パスを除いたもの)は**一人称視点かつ効果ON**の時だけ有効。
-- `night_vision_goggles_red`は`NightVisionGogglesItem`のサブクラスで、`createRenderer()`だけオーバーライドしてモデル/テクスチャを差し替えている(ロジックは全部継承)。
+- 緑エフェクトは**一人称視点かつ効果ON**の時だけ有効。当初はバニラPostChain(`GameRenderer#loadEffect`)を使う専用シェーダーJSONだったが、Rubidium/Oculus系の軽量化Modを併用する実機環境でPostChainがシェーダーパック未選択でも黙って無効化される事例が確認されたため、**HUDレイヤーへの乗算ブレンド描画方式に切り替え済み**(`ClientForgeEvents#drawGreenMultiplyOverlay`)。画面全体に不透明な緑(`0,255,0`)を`DST_COLOR × ZERO`ブレンドで描画することで、既存シーンの緑チャンネルの明るさをそのまま残しつつ赤/青を0にする(平坦な半透明トーンではなく、実際の明暗差が残るFLIR/サーマルっぽい見た目)。スコープのビネットと同じ`RenderGuiEvent.Post`経路を使うため、Sodium系Modの影響を受けない。旧`shaders/post/night_vision.json`は削除済み。
+- `night_vision_goggles_red`は`NightVisionGogglesItem`のサブクラスで、`createRenderer()`だけオーバーライドしてモデル/テクスチャを差し替えている(ロジックは全部継承)。`createRenderer()`には`@OnlyIn(Dist.CLIENT)`が必須(付け忘れるとアイテム登録時に専用サーバーがクラッシュする、詳細は10章)。
 
 ### 4.2 ヘルメット (`helmet_blue` / `helmet_red`)
 - ゴーグル無し、効果無しの見た目だけ版。汎用`HelmetItem`クラス1つでモデル/テクスチャだけコンストラクタ引数で差し替え。
@@ -166,11 +167,33 @@ HANDOVER.md(開発経緯・詰まった箇所のメモ)、README.md(利用者向
 | `concrete_block` | 形状(XXX/X_Y/YYY): `minecraft:sand`×4 + `minecraft:gravel`×4 |
 | `concrete_barrier` | 無形: `concrete_block` 単品 → **2個** |
 
-未設定: `beast_missile_designator`, `active_defense_system`, `coma_grenade`, `iced_tea`, 各種設計図アイテム自体(すべてクリエイティブのみ入手可)。
+未設定: `beast_missile_designator`, `active_defense_system`, `coma_grenade`, `iced_tea`, 各種設計図アイテム自体、9章の無限弾薬・給電アイテム3種(すべてクリエイティブのみ入手可)。
 
 ---
 
-## 9. サーバー設定 (`config/sbwarmory-server.toml`)
+## 9. 無限弾薬・給電アイテム (すべてクリエイティブ専用、レシピ未設定)
+
+SuperbWarfareの弾薬/乗り物系リソースを「持っているだけ」で無限化する管理者/検証用アイテム群。SBW本体のCreative Ammo Boxと同じ「携帯するだけで効く」思想だが、対象を用途別に3アイテムへ分割してある。
+
+### 9.1 一種類無限弾薬箱 (`infinite_ammo_box`)
+- 対象: プレイヤー自身の持ち弾プール(SBWの`Ammo`列挙型: `HANDGUN`/`RIFLE`/`SHOTGUN`/`SNIPER`/`HEAVY`のうち**選択した1種類のみ**)。
+- `inventoryTick`で毎tick、選択中の弾種が上限(`Ammo#getLimit()`)未満なら上限まで補充(`Ammo#set`)。手に持っていなくてもインベントリのどこかにあれば効く。
+- 弾種選択: TACZの単一種弾薬箱と同じUX。アイテムをカーソルで持ち上げ、インベントリ内のSBW弾薬/弾薬箱アイテム(`AmmoSupplierItem`のインスタンス)をクリック(`overrideStackedOnOther`)すると、そのアイテムの弾種(`AmmoSupplierItem#getType()`)に設定される。**クリエイティブモードのプレイヤーのみ**この切り替えが効く(サバイバルプレイヤーがクリックしても無反応)。
+- 選択中の弾種はNBT `AmmoType`(文字列)で保持。ツールチップに現在の弾種名(該当色)を表示。
+
+### 9.2 ビークル無限弾薬箱 (`vehicle_ammo_box`)
+- 対象: 現在騎乗中のSuperbWarfare `VehicleEntity`が持つ**全武器スロット**+デコイ(スモーク/チャフ)。弾種選択UIは無し(無条件で全部補充)。
+- 武器: `VehicleEntity#getGunDataMap()`の全キーに対し`modifyGunData`で`GunData.ammo`(弾倉、`GunProp.MAGAZINE`が上限)と`GunData.backupAmmoCount`(予備弾、上限プロパティが無いため`999999`固定)の両方を補充。`VehicleEntity#getAmmo(GunData)`は弾倉が無い武器(`MAGAZINE<=0`)だと`backupAmmoCount`だけを表示/判定に使うため、両方触らないと「補充されない」ように見える(実際にハマった箇所)。
+- デコイ: `VehicleEntity#getDecoyCount()`/`setDecoyCount()`(乗り物本体の同期int値、GunDataとは別管理)を`DefaultVehicleData#getDecoyMagazineSize()`まで補充。デコイ非搭載の乗り物は上限0のため自動的に何もしない。
+
+### 9.3 無限給電バッテリーパック (`vehicle_battery_pack`)
+- 対象: 現在騎乗中の乗り物のエネルギー残量。`VehicleEntity#hasEnergyStorage()`で対応乗り物か判定し、`getEnergy() < getMaxEnergy()`なら`setEnergy(getMaxEnergy())`。
+
+いずれも実装はリフレクション不要の通常のSBW公開APIで完結しており、`build.gradle`の追加依存も不要(既存のSBW `modImplementation`のみで完結)。
+
+---
+
+## 10. サーバー設定 (`config/sbwarmory-server.toml`)
 
 | セクション | キー | 既定値 | 内容 |
 |---|---|---|---|
@@ -190,8 +213,14 @@ HANDOVER.md(開発経緯・詰まった箇所のメモ)、README.md(利用者向
 
 ---
 
-## 10. 既知の未解決事項
+## 11. 既知の未解決事項
 
 - SRAWランチャーの`GeoModel.getAnimation`NPEクラッシュ(2.2節参照、調査中断中)。
-- `beast_missile_designator`/`active_defense_system`/`coma_grenade`/`iced_tea`/各種設計図アイテムのクラフトレシピ未設定(現状クリエイティブのみ)。
+- `beast_missile_designator`/`active_defense_system`/`coma_grenade`/`iced_tea`/各種設計図アイテム/9章の無限系アイテム3種のクラフトレシピ未設定(現状クリエイティブのみ)。
 - `coma_grenade`のダメージ0仕様は意図的(スタン専用武器として設計)。ダメージも欲しい場合は要相談。
+- ADSのLesRaisins Tactical Equipments対応(3.5節)は実装済みだがMDG(このプロジェクトのdevビルド環境)側で動作未確認 — TACZ+LesRaisinsをMDGのdevクライアント(`gradlew runClient`)に入れるとLesRaisins自身のmixin(`LivingEntityMixin`の`getUseItem`シャドウ)がMDGのrefmap再マッピングと噛み合わずクラッシュするため、実機(パッケージ済みjar+通常のForgeランチャー環境)での確認待ち。
+
+## 12. 解決済みの既知バグ (参考)
+
+- **専用サーバー起動時クラッシュ**(v0.2.2で修正): `NightVisionGogglesItem.createRenderer()`が`@OnlyIn(Dist.CLIENT)`無しでクライアント専用の`GeoArmorRenderer`を返していたため、アイテム登録時(サーバーでも実行される)にForgeの`RuntimeDistCleaner`が検知してクラッシュしていた。メソッド本体に`@OnlyIn`を付与して解決(サブクラスのオーバーライド側だけでは不十分)。
+- **暗視ゴーグルの緑エフェクトが実機の専用サーバーで掛からない**: 4.1節参照。PostChainベースの実装からHUD乗算ブレンド方式へ全面的に作り直して解決。
