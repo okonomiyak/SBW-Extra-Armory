@@ -49,10 +49,11 @@
   "key.categories.sbwarmory": "SBW Extra Armory",
   "key.sbwarmory.toggle_night_vision": "Toggle Night Vision",
   "chat.sbwarmory.cruise_missile_inbound": "§c§lCruise missile inbound!",
-  "entity.sbwarmory.probox_wagon": "Probox Wagon",
-  "entity.sbwarmory.hiace_van": "HiAce Van",
+  "entity.sbwarmory.probox_wagon": "Commercial Wagon",
+  "entity.sbwarmory.hiace_van": "Large Van",
   "entity.sbwarmory.luxury_sedan": "Luxury Sedan",
-  "entity.sbwarmory.probox_mg": "Probox Technical (7.62mm MG)",
+  "entity.sbwarmory.probox_mg": "Commercial Wagon Technical (7.62mm MG)",
   "entity.sbwarmory.hovercraft": "Armed Hovercraft",
-  "entity.sbwarmory.assault_boat": "Assault Boat"
+  "entity.sbwarmory.assault_boat": "Assault Boat",
+  "entity.sbwarmory.motorcycle": "Off-road Motorcycle"
 }

@@ -62,7 +62,7 @@
       "Transform": "Vehicle",
       "Position": [
         -0.653,
-        1.719,
+        1.519,
         2.372
       ],
       "RotateWithVehicle": true,
@@ -84,7 +84,7 @@
       "Transform": "Vehicle",
       "Position": [
         0.653,
-        1.719,
+        1.519,
         2.372
       ],
       "RotateWithVehicle": true,

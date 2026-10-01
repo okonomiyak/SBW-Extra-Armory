@@ -192,6 +192,12 @@ public final class ClientForgeEvents {
         }
         Minecraft mc = Minecraft.getInstance();
 
+        // The flashbang white-out is a HUD layer, and vanilla skips the whole HUD while it's hidden (F1) -
+        // un-hide it while flashed so F1 can't be used to dodge the effect.
+        if (mc.player != null && mc.options.hideGui && mc.player.hasEffect(ModRegistry.FLASHBANG.get())) {
+            mc.options.hideGui = false;
+        }
+
         if (mc.player != null && mc.player.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.HEAD).getItem()
                 instanceof NightVisionGogglesItem) {
             while (ModKeyMappings.TOGGLE_NIGHT_VISION.consumeClick()) {

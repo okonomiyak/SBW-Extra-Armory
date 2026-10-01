@@ -5,24 +5,22 @@ import com.atsuishio.superbwarfare.tools.OBB;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.minecraftforge.fml.ModList;
-import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 
 import java.util.Arrays;
 
 /**
  * Lets one jar run on both SuperbWarfare 0.8.9.0 and 0.8.9.1+. Compiled against 0.8.9.1+; the few
- * APIs that differ are bridged here. Check with `gradlew compileJava -Psbw_file=8104849` (0.8.9.0).
+ * APIs that differ are bridged here. See build.gradle for running the dev client/server on 0.8.9.0.
  */
 public final class SbwCompat {
 
     /**
      * 0.8.9.0 renders vehicles through GeckoLib (VehicleRenderer + VehicleModel); 0.8.9.1 switched to
-     * BasicVehicleRenderer. 0.8.9.0's mods.toml reports itself as plain "0.8.9".
+     * BasicVehicleRenderer, together with the multi-model resource format (VehicleModelPojo). Detected by
+     * that common-side data class rather than the version string, which can carry suffixes like "-hotfix"
+     * that Maven ordering would sort below 0.8.9.1.
      */
-    public static final boolean LEGACY_VEHICLE_RENDERING = ModList.get().getModContainerById("superbwarfare")
-            .map(c -> c.getModInfo().getVersion().compareTo(new DefaultArtifactVersion("0.8.9.1")) < 0)
-            .orElse(false);
+    public static final boolean LEGACY_VEHICLE_RENDERING = !classExists("com.atsuishio.superbwarfare.resource.vehicle.VehicleModelPojo");
 
     /** OBB part "Collision" only exists from 0.8.9.1; 0.8.9.0 fails to parse the whole vehicle file on it. */
     private static final boolean HAS_COLLISION_OBB = Arrays.stream(OBB.Part.values())
@@ -57,6 +55,15 @@ public final class SbwCompat {
         json.add("OBB", kept);
         event.setJsonStr(json.toString());
         SbwArmoryMod.LOGGER.debug("Stripped Collision OBBs from {} for SuperbWarfare 0.8.9.0", event.getId());
+    }
+
+    private static boolean classExists(String name) {
+        try {
+            Class.forName(name, false, SbwCompat.class.getClassLoader());
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
     }
 
     private SbwCompat() {}

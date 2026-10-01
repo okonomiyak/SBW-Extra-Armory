@@ -27,6 +27,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 public class FlashbangGrenadeEntity extends HandGrenadeEntity implements GeoEntity {
 
     private static final int FUSE_TICKS = 30;
+    private static final double CLEARANCE = 0.25;
     private static final double RADIUS = 12.0;
     private static final int MAX_DURATION_TICKS = 140; // 7s point-blank, looking straight at it
     private static final int MIN_DURATION_TICKS = 20;
@@ -58,8 +59,11 @@ public class FlashbangGrenadeEntity extends HandGrenadeEntity implements GeoEnti
 
     /** Called by SBW's FastThrowableProjectile when the fuse runs out (it discards us right after). */
     @Override
-    public void causeExplode(Vec3 pos) {
+    public void causeExplode(Vec3 grenadePos) {
         if (!(level() instanceof ServerLevel serverLevel)) return;
+        // A grenade resting on the ground sits on (or a hair inside) the floor block, and a ray that starts
+        // or ends inside a block counts as blocked - lift the burst point so line-of-sight checks work.
+        Vec3 pos = grenadePos.add(0, CLEARANCE, 0);
 
         AABB area = new AABB(pos, pos).inflate(RADIUS);
         for (LivingEntity target : serverLevel.getEntitiesOfClass(LivingEntity.class, area)) {

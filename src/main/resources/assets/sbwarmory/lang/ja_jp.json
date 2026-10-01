@@ -49,10 +49,11 @@
   "key.categories.sbwarmory": "SBW Extra Armory",
   "key.sbwarmory.toggle_night_vision": "暗視ゴーグルのON/OFF",
   "chat.sbwarmory.cruise_missile_inbound": "§c§l巡航ミサイル接近中！",
-  "entity.sbwarmory.probox_wagon": "プロボックス",
-  "entity.sbwarmory.hiace_van": "ハイエース",
+  "entity.sbwarmory.probox_wagon": "商用ワゴン",
+  "entity.sbwarmory.hiace_van": "大型バン",
   "entity.sbwarmory.luxury_sedan": "黒塗りの高級車",
-  "entity.sbwarmory.probox_mg": "プロボックス 7.62mm機銃搭載型",
+  "entity.sbwarmory.probox_mg": "商用ワゴン 7.62mm機銃搭載型",
   "entity.sbwarmory.hovercraft": "武装ホバークラフト",
-  "entity.sbwarmory.assault_boat": "密閉式アサルトボート"
+  "entity.sbwarmory.assault_boat": "密閉式アサルトボート",
+  "entity.sbwarmory.motorcycle": "オフロードバイク"
 }

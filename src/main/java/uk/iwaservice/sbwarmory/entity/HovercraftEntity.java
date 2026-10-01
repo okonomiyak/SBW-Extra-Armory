@@ -12,10 +12,10 @@ import net.minecraft.world.phys.Vec3;
 public class HovercraftEntity extends CivilianCarEntity {
 
     /**
-     * SBW damps grounded Ship-engine vehicles by 0.75/tick vs ~0.85/tick in water, so land thrust is
-     * scaled up to land at roughly 90% of water top speed. Raise for faster land travel.
+     * SBW damps grounded Ship-engine vehicles by 0.75/tick vs ~0.85/tick in water, so top speed on land
+     * is about 0.6x this value of the water top speed (0.9 -> roughly half). Raise for faster land travel.
      */
-    private static final double LAND_THRUST_SCALE = 1.5;
+    private static final double LAND_THRUST_SCALE = 0.9;
 
     public HovercraftEntity(EntityType<? extends HovercraftEntity> type, Level level) {
         super(type, level);
@@ -24,7 +24,9 @@ public class HovercraftEntity extends CivilianCarEntity {
     @Override
     public void travel() {
         super.travel();
-        if (isInFluidType() || isUnderWater() || isWreck()) return;
+        // Only on the ground: airborne, SBW damps motion by just 0.99/tick, so thrust there piles up
+        // into runaway speed (about 25x the land top speed).
+        if (isInFluidType() || isUnderWater() || isWreck() || !onGround()) return;
 
         float power = getPower();
         Vec3 motion = getDeltaMovement();

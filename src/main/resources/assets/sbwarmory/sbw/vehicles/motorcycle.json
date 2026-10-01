@@ -1,0 +1,12 @@
+{
+  "Models": [
+    {
+      "Model": "sbwarmory:models/bedrock/vehicle/motorcycle.geo.json",
+      "Texture": "sbwarmory:textures/bedrock/vehicle/motorcycle.png"
+    }
+  ],
+  "Model": {
+    "Model": "sbwarmory:geo/vehicle/motorcycle.geo.json",
+    "Texture": "sbwarmory:textures/bedrock/vehicle/motorcycle.png"
+  }
+}

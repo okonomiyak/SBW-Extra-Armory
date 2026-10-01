@@ -302,6 +302,9 @@ public final class ModRegistry {
     public static final RegistryObject<EntityType<uk.iwaservice.sbwarmory.entity.CivilianCarEntity>> ASSAULT_BOAT =
             civilianCar("assault_boat", 3.0f, 2.0f);
 
+    public static final RegistryObject<EntityType<uk.iwaservice.sbwarmory.entity.MotorcycleEntity>> MOTORCYCLE =
+            vehicle("motorcycle", uk.iwaservice.sbwarmory.entity.MotorcycleEntity::new, 1.0f, 1.5f);
+
     private static RegistryObject<EntityType<uk.iwaservice.sbwarmory.entity.CivilianCarEntity>> civilianCar(
             String id, float width, float height) {
         return vehicle(id, uk.iwaservice.sbwarmory.entity.CivilianCarEntity::new, width, height);
@@ -357,7 +360,7 @@ public final class ModRegistry {
             .icon(() -> com.atsuishio.superbwarfare.item.container.ContainerBlockItem.createInstance(PROBOX_WAGON.get()))
             .withTabsBefore(TAB.getKey())
             .displayItems((params, output) -> {
-                for (var vehicle : java.util.List.of(PROBOX_WAGON, HIACE_VAN, LUXURY_SEDAN, PROBOX_MG, HOVERCRAFT, ASSAULT_BOAT)) {
+                for (var vehicle : java.util.List.of(PROBOX_WAGON, HIACE_VAN, LUXURY_SEDAN, PROBOX_MG, MOTORCYCLE, HOVERCRAFT, ASSAULT_BOAT)) {
                     output.accept(com.atsuishio.superbwarfare.item.container.ContainerBlockItem.createInstance(vehicle.get()));
                 }
                 output.accept(VEHICLE_AMMO_BOX_ITEM.get());

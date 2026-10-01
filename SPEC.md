@@ -1,6 +1,6 @@
 # SBW Extra Armory 仕様書
 
-最終更新: 2026-09-25 (mod_version 0.2.2時点、次期0.2.3向け未リリース分を含む)
+最終更新: 2026-10-01 (mod_version 0.2.3、SuperbWarfare 0.8.9.0 / 0.8.9.1+ 両対応の単一jar)
 
 HANDOVER.md(開発経緯・詰まった箇所のメモ)、README.md(利用者向け概要)とは別に、実装されている全アイテム/エンティティ/エフェクト/設定値を機能単位でまとめた技術仕様書。
 
@@ -34,7 +34,23 @@ HANDOVER.md(開発経緯・詰まった箇所のメモ)、README.md(利用者向
 - 見た目はスモーククラスター擲弾のモデルを流用し、テクスチャ全体を青系に色相統一したもの(`textures/item/coma_grenade.png`)。専用の`GeoEntityRenderer`/`GeoModel`で描画(理由は1.6参照)。
 
 ### 1.6 実装上の注意: `HandGrenadeEntity`系のレンダリング
-`HandGrenadeEntity`は`getModel()`/`getModelInstance()`等を自前でオーバーライドしており、SBW汎用の`BasicProjectileRenderer`(エンティティ登録名からモデルパスを自動導出する仕組み)を使うと**SBWの素の手榴弾モデルが表示されてしまう**(`GunGrenadeEntity`系にはこの問題はない)。`HandGrenadeEntity`を継承する自作エンティティ(`spring_grenade`, `coma_grenade`)は、GeckoLib純正の`GeoEntityRenderer`+専用`GeoModel`を使うこと。
+`HandGrenadeEntity`は`getModel()`/`getModelInstance()`等を自前でオーバーライドしており、SBW汎用の`BasicProjectileRenderer`(エンティティ登録名からモデルパスを自動導出する仕組み)を使うと**SBWの素の手榴弾モデルが表示されてしまう**(`GunGrenadeEntity`系にはこの問題はない)。`HandGrenadeEntity`を継承する自作エンティティ(`spring_grenade`, `coma_grenade`, `flashbang_grenade`, `stun_grenade`)は、GeckoLib純正の`GeoEntityRenderer`+専用`GeoModel`を使うこと。
+
+### 1.7 フラッシュバン (`flashbang_grenade`)
+- `HandGrenadeEntity`継承。構えて離すと投げる。跳ねて転がり、フューズ30tick(1.5秒)で起爆。ダメージ・ブロック破壊なし。
+- 起爆はSBWの`FastThrowableProjectile`が寿命切れで呼ぶ`causeExplode(Vec3)`をオーバーライドして、爆発の代わりに閃光を出す。
+- 半径12ブロック以内で、閃光点との間に視線を遮るブロックがない(`ClipContext.Block.VISUAL`、ガラスは透過)`LivingEntity`に**フラッシュバン効果**(5.3節)を付与。
+- 効果時間 = 最大140tick(7秒) × (1 − 距離/半径) × 向き係数、最低20tick。向き係数は閃光の方を向いていれば0.5〜1.0、背を向けていても0.35。
+- 演出: `FLASH`/`END_ROD`/`CLOUD`パーティクル、高ピッチの爆発音+花火の破裂音。見た目はスモーククラスター擲弾のモデルに淡いグレーのテクスチャ。
+
+### 1.8 スタングレネード (`stun_grenade`)
+- フラッシュバンと同じ投擲・フューズ方式。起爆時、半径6ブロック以内で遮蔽(`ClipContext.Block.COLLIDER`)のない`LivingEntity`に**SBW本体のショック効果**(`superbwarfare:shock`、テーザー銃と同じ)を付与。
+- ショックの中身はSBW側の仕様: 移動速度-10(その場から動けない)、付与時に電撃1.25ダメージ+感電音、以降1秒ごとに1.25ダメージ。
+- 効果時間は中心80tick(4秒)〜端20tick。投げた本人を効果の発生源として渡すので、ダメージは投擲者のものとして扱われる。**投げた本人も範囲内なら被弾する**(仕様)。
+- 演出: `ELECTRIC_SPARK`/`FLASH`パーティクル、SBWの`ELECTRIC`音+破裂音。テクスチャは黄色系。
+
+### 1.9 実装上の注意: 閃光・電撃の遮蔽判定
+地面に止まったグレネードは床ブロックの表面か、わずかに内側にある。バニラの`VoxelShape.clip`は光線の始点がブロック形状の内側にあると即「命中」を返すため、グレネード座標をそのまま使うと全員が遮蔽扱いになる。1.7/1.8は判定点を0.25ブロック持ち上げている(`CLEARANCE`)。
 
 ---
 
@@ -45,7 +61,7 @@ HANDOVER.md(開発経緯・詰まった箇所のメモ)、README.md(利用者向
 - 通常ライフル弾 + アンダースラング「グレネード」枠(クラスター擲弾弾薬を発射)の2種装填。
 
 ### 2.2 SRAW / SRAWミサイル (`sraw_launcher` / `sraw_missile`)
-- `GunGrenadeEntity`継承、`GuidedMissile`マーカーインターフェース実装(4章参照)。
+- `GunGrenadeEntity`継承、`GuidedMissile`マーカーインターフェース実装(3.4節参照)。
 - 誘導方式: 発射5tick後から、毎tick撃った本人の視線方向(64ブロック先)へ8%(`TURN_FACTOR=0.08`)ずつ機体を曲げる。
 - 描画は素のSBW `BasicProjectileRenderer`のまま(専用モデルは手持ちアイテムのみ)。
 - **未解決の既知バグ**: GeckoLibの`GeoModel.getAnimation`で`NullPointerException`が発生することがある。再現条件未特定、調査は中断中。
@@ -99,7 +115,7 @@ HANDOVER.md(開発経緯・詰まった箇所のメモ)、README.md(利用者向
 - 装備中(頭スロットに入っている間)、`inventoryTick`でバニラ`NIGHT_VISION`効果を継続付与(220tickごとに再付与)。
 - **Nキー**(`ModKeyMappings.TOGGLE_NIGHT_VISION`)でON/OFFトグル可能。NBTの`Active`フラグ(既定true)で管理、`ToggleNightVisionPacket`でサーバーに反映。
 - 緑エフェクトは**一人称視点かつ効果ON**の時だけ有効。当初はバニラPostChain(`GameRenderer#loadEffect`)を使う専用シェーダーJSONだったが、Rubidium/Oculus系の軽量化Modを併用する実機環境でPostChainがシェーダーパック未選択でも黙って無効化される事例が確認されたため、**HUDレイヤーへの乗算ブレンド描画方式に切り替え済み**(`ClientForgeEvents#drawGreenMultiplyOverlay`)。画面全体に不透明な緑(`0,255,0`)を`DST_COLOR × ZERO`ブレンドで描画することで、既存シーンの緑チャンネルの明るさをそのまま残しつつ赤/青を0にする(平坦な半透明トーンではなく、実際の明暗差が残るFLIR/サーマルっぽい見た目)。スコープのビネットと同じ`RenderGuiEvent.Post`経路を使うため、Sodium系Modの影響を受けない。旧`shaders/post/night_vision.json`は削除済み。
-- `night_vision_goggles_red`は`NightVisionGogglesItem`のサブクラスで、`createRenderer()`だけオーバーライドしてモデル/テクスチャを差し替えている(ロジックは全部継承)。`createRenderer()`には`@OnlyIn(Dist.CLIENT)`が必須(付け忘れるとアイテム登録時に専用サーバーがクラッシュする、詳細は10章)。
+- `night_vision_goggles_red`は`NightVisionGogglesItem`のサブクラスで、`createRenderer()`だけオーバーライドしてモデル/テクスチャを差し替えている(ロジックは全部継承)。`createRenderer()`には`@OnlyIn(Dist.CLIENT)`が必須(付け忘れるとアイテム登録時に専用サーバーがクラッシュする、詳細は14章)。
 
 ### 4.2 ヘルメット (`helmet_blue` / `helmet_red`)
 - ゴーグル無し、効果無しの見た目だけ版。汎用`HelmetItem`クラス1つでモデル/テクスチャだけコンストラクタ引数で差し替え。
@@ -117,6 +133,12 @@ HANDOVER.md(開発経緯・詰まった箇所のメモ)、README.md(利用者向
 - バニラの`FoodProperties`機構をそのまま使用(専用Itemクラス不要)。
 - 食べると**確定で昏睡10秒(200tick)** を付与(`effect(..., 1.0F)`)。
 - 早食い(`fast()`)。アイコンはユーザー提供の専用テクスチャ。
+
+### 5.3 フラッシュバン (`flashbang`)
+- プレイヤー: 画面全体を白で塗りつぶす(`ClientForgeEvents#onRenderFlashbang`。`RenderGuiEvent.Post`を`EventPriority.LOWEST`で購読し、スコープ/暗視ゴーグルの描画より上に重ねる)。残り40tick(`FADE_TICKS`)から線形にフェードアウト。
+- F1でHUDを隠すとバニラはHUD描画自体を飛ばすため、効果中は`hideGui`を毎tick解除している(F1で回避できないように)。
+- モブ: 効果中は毎tick`setTarget(null)`+ナビゲーション停止(見失って立ち止まる)。
+- 効果アイコン: `textures/mob_effect/flashbang.png`(自作16x16)。
 
 ---
 
@@ -167,7 +189,9 @@ HANDOVER.md(開発経緯・詰まった箇所のメモ)、README.md(利用者向
 | `concrete_block` | 形状(XXX/X_Y/YYY): `minecraft:sand`×4 + `minecraft:gravel`×4 |
 | `concrete_barrier` | 無形: `concrete_block` 単品 → **2個** |
 
-未設定: `beast_missile_designator`, `active_defense_system`, `coma_grenade`, `iced_tea`, 各種設計図アイテム自体、9章の無限弾薬・給電アイテム3種(すべてクリエイティブのみ入手可)。
+車両(10章)はSBWの車両組立台レシピ(`superbwarfare:vehicle_assembling`)。材料は10.1節の表を参照。
+
+未設定: `beast_missile_designator`, `active_defense_system`, `coma_grenade`, `flashbang_grenade`, `stun_grenade`, `iced_tea`, 各種設計図アイテム自体、9章の無限弾薬・給電アイテム3種(すべてクリエイティブのみ入手可)。
 
 ---
 
@@ -193,7 +217,65 @@ SuperbWarfareの弾薬/乗り物系リソースを「持っているだけ」で
 
 ---
 
-## 10. サーバー設定 (`config/sbwarmory-server.toml`)
+## 10. 車両
+
+すべてSBWのデータ駆動車両。性能・座席・当たり判定は`data/sbwarmory/sbw/vehicles/<id>.json`、モデル/テクスチャは`assets/sbwarmory/sbw/vehicles/<id>.json`(0.8.9.1+用の`Models`と0.8.9.0用の`Model`を併記、11章)。モデルは`models/bedrock/vehicle/<id>.geo.json`(1.1倍スケール=22unit/m基準のBedrock形式、ユーザー提供)。
+入手はSBWのコンテナアイテム(設置で展開)。`RegisterContainersEvent`でSBW側のコンテナ一覧にも載せている。
+
+### 10.1 車両一覧
+
+| ID | 表示名 | クラス | エンジン | 座席 | 武装 | 組立レシピ(主な材料) |
+|---|---|---|---|---|---|---|
+| `probox_wagon` | 商用ワゴン | `CivilianCarEntity` | Wheel | 4 | なし | 鋼鉄ブロック2/チェスト/中型バッテリー/タイヤ4/大型モーター |
+| `hiace_van` | 大型バン | `CivilianCarEntity` | Wheel | 9(前2・2列目3・荷室4) | なし | 同上 |
+| `luxury_sedan` | 黒塗りの高級車 | `CivilianCarEntity` | Wheel | 4 | なし | 同上 |
+| `probox_mg` | 商用ワゴン 7.62mm機銃搭載型 | `CivilianCarEntity` | Wheel | 5(席2=射手) | 7.62mm機銃 | 鋼鉄ブロック2/中型バッテリー/タイヤ4/大型モーター/軽武装モジュール |
+| `motorcycle` | オフロードバイク | `MotorcycleEntity` | Wheel | 2 | なし | 鋼鉄ブロック/小型バッテリー/タイヤ2/モーター |
+| `hovercraft` | 武装ホバークラフト | `HovercraftEntity` | Ship(+陸上走行) | 5(席1=射手) | 7.62mm機銃 | SBWスピードボートと同じ |
+| `assault_boat` | 密閉式アサルトボート | `CivilianCarEntity` | Ship | 5 | 前部RWS重機関銃+後部機銃 | SBWスピードボートと同じ |
+
+- 共通: 全車`GeoVehicleEntity`継承(0.8.9.0のGeckoLib描画に必要、11章)。デコイキーでクラクション。登録は`ModRegistry#vehicle()`/`civilianCar()`(SBW自身の`ModEntities.vehicle()`と同じBuilder設定)。
+- 描画: 0.8.9.1+は車が`BasicVehicleRenderer`、ホバークラフト/アサルトボートは`SpeedBoatRenderer`(`move_propeller`/`move_rudder`ボーンを回す)。0.8.9.0は全車`LegacyVehicleRenderer`。
+- 機銃の発砲炎は自作の`animations/bedrock/vehicle/machine_gun_flare.animation.json`(`flare`ボーンのみ)。SBW本体のHMG/スピードボート用アニメを流用すると、存在しないボーン指定(`gun`/`action`/`m2hb`等)が別のボーンに当たり、撃つとタイヤが巨大化するバグがあった。
+- アイコン: `textures/vehicle_icon/<id>_icon.png`(256x64、白線画)。コンテナ用は`assets/superbwarfare/textures/vehicle_icon/container/<id>.png`(SBWが`superbwarfare`名前空間からしか読まないため)。
+- アサルトボートの後部機銃は射手の視線方向に撃つが、モデルは後ろ向き固定(`aftYaw`/`aftPitch`を回す専用レンダラ未実装)。
+
+### 10.2 データ作成上の注意(実際にハマった点)
+- **`Collision`パーツのOBBは底面をタイヤ接地面(y=0)まで伸ばすこと。** SBW 0.8.9.1+の`VehicleEntity.move()`は車体をこの箱の底面で地面に載せるため、底を浮かせるとその分だけ車体ごと沈む(当初0.22〜0.29ブロック沈んでいた)。
+- 座席の高さ: 座面上端 − 0.73ブロック ≈ `Seats[].Position.y`(プロボックスで実機調整した値。SBWピックアップからの逆算値0.53だと視点が高すぎる)。
+- `TerrainCompat`(接地点)を書くとSBWが地形に合わせて車体を傾ける(飛行機/ヘリ/飛行船以外。船タイプにも効く)。
+- **窓ガラスはほぼ不透明(アルファ238〜254)にすること。** SBWは車両全体を`entityTranslucent`(深度を書き込む)で描くため、透けるガラスだと後から描かれた他の車両がガラスの奥で消える。SBW本体のピックアップも223〜253。当初0.6前後で、ガラス越しに他の車両が見えなくなっていた。
+- データJSON上の座標: 前方+Z、+Xが車両の左。モデルファイル上は前方−Z、`wheelL*`がx正。
+
+### 10.3 ホバークラフト・バイクの独自処理
+- **ホバークラフト**: SBWの`Ship`エンジンは船体が液体中のときしか旋回・推進しない(接地中は速度を毎tick0.75倍にするだけ)。`HovercraftEntity#travel`で、液体外かつ接地中ならSBWの`shipEngine`と同じ式(旋回: yaw −= 20×水平速度×deltaRot×sign(power)、推進: view×0.11×targetSpeed×power×min(|power|,1))を自前で掛ける。陸上推進は`LAND_THRUST_SCALE`=0.9倍(陸上最高速は水上の約半分)。`UpStep`1.1で浜辺の段差を越える。最高速は`MaxForwardSpeedRate`1.125/`MaxBackwardSpeedRate`0.75(当初値の0.75倍。推進力はこの値に比例するので水上・陸上とも効く)。
+- **バイク**: SBWの`Wheel`エンジンは四輪前提で傾かないため、`MotorcycleEntity#baseTick`で旋回に応じてロール角を付ける。傾き = atan(水平速度×ヨー角速度/重力0.08)、最大40°、毎tick 3割ずつ追従。SBWは`Axis.ZP`でロール(正=右へ傾く)、右旋回でyRotが増えるので符号は正。SBWの地形追従も毎tickロールを書き換えるため、SBWの処理の前に前回の傾きを外し、後で足し直す(`prevRoll`も補正して描画補間を連続に保つ)。ハンドル/フォークは静止(前輪のみ操舵)。
+
+### 10.4 クリエイティブタブ
+- 「SBW Extra Armory」(`itemGroup.sbwarmory`): 車両以外。以前はタイトルキーが`itemGroup.smokelauncher`で未翻訳だったのを修正。
+- 「SBW Extra Armory: 車両」(`itemGroup.sbwarmory.vehicles`): 車両7種のコンテナ+`vehicle_ammo_box`+`vehicle_battery_pack`。アイコンはプロボックスのコンテナ。
+
+---
+
+## 11. SuperbWarfare 0.8.9.0 互換 (`SbwCompat`)
+
+0.8.9.1+向けにコンパイルした1つのjarが0.8.9.0でも動く(旧`sbw-0.8.9.0-compat`ブランチ/`-sbw0.8.9.0`版jarは不要になった)。
+
+| 0.8.9.0との差 | 対処 |
+|---|---|
+| 車両描画がGeckoLib方式(`VehicleRenderer`+`VehicleModel`) | `SbwCompat.LEGACY_VEHICLE_RENDERING`で描画クラスを切替。判定は0.8.9.1+にしかないデータクラス`resource.vehicle.VehicleModelPojo`の有無(バージョン文字列は"-hotfix"等の接尾辞でMaven比較が狂うため使わない)。新版専用レンダラへの参照は`ClientModEvents.ModernVehicleRenderers`に隔離。起動ログに選択結果を出力 |
+| GeckoLibは`geo/`配下のモデルしか読まない | `build.gradle`の`processResources`で`models/bedrock/vehicle/*.geo.json`を`geo/vehicle/`へコピー。リソースJSONの`Model`ブロックがそちらを指す |
+| OBBパーツ`Collision`が無く、車両JSON全体の解析に失敗する | `LoadingJsonEvent`(Forgeバス)で、0.8.9.0のときだけ自Modの車両JSONから`Collision`行を除去(debugログに記録) |
+| `setGravity`→`setCustomGravity`改名 | `SbwCompat.disableProjectileGravity`がリフレクションで両方の名前を試す(巡航ミサイル/SRAW/投げナイフ) |
+| デコイ残数APIが無い | `VehicleAmmoBoxItem`のデコイ補充は`NoSuchMethodError`を捕捉してスキップ |
+| 0.8.9.0は自身を"0.8.9"と名乗る | `mods.toml`のSBW依存下限を`[0.8.9,)`に |
+
+- 0.8.9.0で劣る点: 機銃の発砲炎・ファン・舵が動かない、`Collision`を外すので地形傾きは簡易判定、デコイ補充なし。
+- 開発用: `gradlew runClient`/`runServer`に`-Psbw_runtime_file=8104849`を付けると0.8.9.0上で起動(コンパイルは常に0.8.9.1-hotfix)。`-Psbw_file=8104849`でのコンパイルは上記の隔離箇所でのみ失敗するのが正常。
+
+---
+
+## 12. サーバー設定 (`config/sbwarmory-server.toml`)
 
 | セクション | キー | 既定値 | 内容 |
 |---|---|---|---|
@@ -213,14 +295,23 @@ SuperbWarfareの弾薬/乗り物系リソースを「持っているだけ」で
 
 ---
 
-## 11. 既知の未解決事項
+## 13. 既知の未解決事項
 
 - SRAWランチャーの`GeoModel.getAnimation`NPEクラッシュ(2.2節参照、調査中断中)。
-- `beast_missile_designator`/`active_defense_system`/`coma_grenade`/`iced_tea`/各種設計図アイテム/9章の無限系アイテム3種のクラフトレシピ未設定(現状クリエイティブのみ)。
+- `beast_missile_designator`/`active_defense_system`/`coma_grenade`/`flashbang_grenade`/`stun_grenade`/`iced_tea`/各種設計図アイテム/9章の無限系アイテム3種のクラフトレシピ未設定(現状クリエイティブのみ)。
+- 車両まわりで実機未確認の点: バイクの傾く向きと深く傾いたときの車高(`Collision`箱も傾くので浮く可能性)、0.8.9.0での車両の描画・乗車(起動とデータ読込のみ確認済み)。
+- アサルトボート後部機銃のモデルが照準に追従しない(10.1節)。
+- フラッシュバンに耳鳴り/聴覚低下の演出なし。
 - `coma_grenade`のダメージ0仕様は意図的(スタン専用武器として設計)。ダメージも欲しい場合は要相談。
 - ADSのLesRaisins Tactical Equipments対応(3.5節)は実装済みだがMDG(このプロジェクトのdevビルド環境)側で動作未確認 — TACZ+LesRaisinsをMDGのdevクライアント(`gradlew runClient`)に入れるとLesRaisins自身のmixin(`LivingEntityMixin`の`getUseItem`シャドウ)がMDGのrefmap再マッピングと噛み合わずクラッシュするため、実機(パッケージ済みjar+通常のForgeランチャー環境)での確認待ち。
 
-## 12. 解決済みの既知バグ (参考)
+## 14. 解決済みの既知バグ (参考)
+
+- **probox_mgで撃つとタイヤが巨大化**: SBW本体のHMGアニメ流用が原因。閃光専用アニメに差し替え(10.1節)。ホバークラフトも予防的に同様。
+- **ホバークラフトが空中で爆速になる**: 陸上用の推進を空中でも掛けていた。空中のSBWの減衰は0.99/tickしかないため加速し続けた。接地中のみに限定(10.3節)。
+- **全車のタイヤが地面に埋まる**: `Collision`OBBの底が浮いていたのが原因(10.2節)。
+- **フラッシュバン/スタンが効かないことがある**: 遮蔽判定の始点が床の内側にあった(1.9節)。
+- **`NoSuchFieldError: CREATIVE_MODE_TAB`で起動失敗**: `build/devlibs/`の開発用jar(Mojang名のまま)を通常環境に入れていた。配布・実機には必ず`build/libs/`のjarを使う。
 
 - **専用サーバー起動時クラッシュ**(v0.2.2で修正): `NightVisionGogglesItem.createRenderer()`が`@OnlyIn(Dist.CLIENT)`無しでクライアント専用の`GeoArmorRenderer`を返していたため、アイテム登録時(サーバーでも実行される)にForgeの`RuntimeDistCleaner`が検知してクラッシュしていた。メソッド本体に`@OnlyIn`を付与して解決(サブクラスのオーバーライド側だけでは不十分)。
 - **暗視ゴーグルの緑エフェクトが実機の専用サーバーで掛からない**: 4.1節参照。PostChainベースの実装からHUD乗算ブレンド方式へ全面的に作り直して解決。

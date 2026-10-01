@@ -25,6 +25,7 @@ public class SbwArmoryMod {
             e.add(ModRegistry.PROBOX_MG);
             e.add(ModRegistry.HOVERCRAFT);
             e.add(ModRegistry.ASSAULT_BOAT);
+            e.add(ModRegistry.MOTORCYCLE);
         });
         ModNetworking.register();
         net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(SbwCompat::onLoadingJson);

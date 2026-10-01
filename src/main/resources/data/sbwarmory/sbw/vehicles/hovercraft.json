@@ -286,8 +286,8 @@
   "EngineInfo": {
     "Buoyancy": 0.09,
     "EnergyCostRate": 48,
-    "MaxForwardSpeedRate": 1.5,
-    "MaxBackwardSpeedRate": 1.0,
+    "MaxForwardSpeedRate": 1.125,
+    "MaxBackwardSpeedRate": 0.75,
     "Increment": 0.035,
     "Decrement": 0.022,
     "SteeringSpeed": 0.15,
