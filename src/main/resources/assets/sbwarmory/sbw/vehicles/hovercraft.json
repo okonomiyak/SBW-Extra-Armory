@@ -5,5 +5,9 @@
       "Model": "sbwarmory:models/bedrock/vehicle/hovercraft.geo.json",
       "Texture": "sbwarmory:textures/bedrock/vehicle/hovercraft.png"
     }
-  ]
+  ],
+  "Model": {
+    "Model": "sbwarmory:geo/vehicle/hovercraft.geo.json",
+    "Texture": "sbwarmory:textures/bedrock/vehicle/hovercraft.png"
+  }
 }

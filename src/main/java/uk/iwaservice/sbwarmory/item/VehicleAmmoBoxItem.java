@@ -57,9 +57,13 @@ public class VehicleAmmoBoxItem extends Item {
         // Smoke/chaff decoy launchers are tracked entirely separately from GunData - a plain
         // synced int on the vehicle itself, capped by DefaultVehicleData's configured magazine size
         // (0 for vehicles with no decoy hardware, so this is a no-op for those).
-        int decoyMax = vehicle.computed().getDecoyMagazineSize();
-        if (vehicle.getDecoyCount() < decoyMax) {
-            vehicle.setDecoyCount(decoyMax);
+        try {
+            int decoyMax = vehicle.computed().getDecoyMagazineSize();
+            if (vehicle.getDecoyCount() < decoyMax) {
+                vehicle.setDecoyCount(decoyMax);
+            }
+        } catch (NoSuchMethodError e) {
+            // SBW 0.8.9.0 has no decoy count (just a cooldown-driven ready flag) - nothing to refill.
         }
     }
 

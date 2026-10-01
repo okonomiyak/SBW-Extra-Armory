@@ -4,5 +4,9 @@
       "Model": "sbwarmory:models/bedrock/vehicle/hiace_van.geo.json",
       "Texture": "sbwarmory:textures/bedrock/vehicle/hiace_van.png"
     }
-  ]
+  ],
+  "Model": {
+    "Model": "sbwarmory:geo/vehicle/hiace_van.geo.json",
+    "Texture": "sbwarmory:textures/bedrock/vehicle/hiace_van.png"
+  }
 }

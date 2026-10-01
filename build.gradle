@@ -67,7 +67,13 @@ repositories {
 
 dependencies {
     // Hard dependency: SmokeClusterGrenadeEntity extends SuperbWarfare's GunGrenadeEntity directly.
-    modImplementation 'curse.maven:superb-warfare-1218165:8689629' // 0.8.9.1-hotfix
+    // Compiled against 0.8.9.1-hotfix; the same jar also runs on 0.8.9.0 (see SbwCompat).
+    // Run the dev client/server on 0.8.9.0 with `-Psbw_runtime_file=8104849`.
+    // `gradlew compileJava -Psbw_file=8104849` should only fail in the version-guarded spots -
+    // ClientModEvents.ModernVehicleRenderers and VehicleAmmoBoxItem's decoy refill.
+    def sbwCompileFile = project.findProperty('sbw_file') ?: '8689629'
+    modCompileOnly "curse.maven:superb-warfare-1218165:${sbwCompileFile}"
+    modRuntimeOnly "curse.maven:superb-warfare-1218165:${project.findProperty('sbw_runtime_file') ?: sbwCompileFile}"
 
     // GrenadeCarbineItem/GrenadeCarbineItemModel compile directly against GeckoLib's renderer API.
     modImplementation 'curse.maven:geckolib-388172:8285794'
@@ -79,4 +85,13 @@ dependencies {
 
     // Dev-only convenience: browse items/recipes in the dev client.
     modRuntimeOnly 'maven.modrinth:u6dRKJwZ:MdKE2PdF' // JEI 15.20.0.128
+}
+
+// SBW 0.8.9.0 renders vehicles with GeckoLib, which only loads geo files from geo/ - ship a copy of
+// each vehicle model there too (referenced by the "Model" block in assets/sbwarmory/sbw/vehicles/*.json).
+tasks.named('processResources', ProcessResources) {
+    from('src/main/resources/assets/sbwarmory/models/bedrock/vehicle') {
+        include '*.geo.json'
+        into 'assets/sbwarmory/geo/vehicle'
+    }
 }

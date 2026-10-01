@@ -5,5 +5,9 @@
       "Model": "sbwarmory:models/bedrock/vehicle/probox_mg.geo.json",
       "Texture": "sbwarmory:textures/bedrock/vehicle/probox_mg.png"
     }
-  ]
+  ],
+  "Model": {
+    "Model": "sbwarmory:geo/vehicle/probox_mg.geo.json",
+    "Texture": "sbwarmory:textures/bedrock/vehicle/probox_mg.png"
+  }
 }

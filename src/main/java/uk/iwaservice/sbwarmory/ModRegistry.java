@@ -299,6 +299,9 @@ public final class ModRegistry {
     public static final RegistryObject<EntityType<uk.iwaservice.sbwarmory.entity.HovercraftEntity>> HOVERCRAFT =
             vehicle("hovercraft", uk.iwaservice.sbwarmory.entity.HovercraftEntity::new, 3.0f, 2.0f);
 
+    public static final RegistryObject<EntityType<uk.iwaservice.sbwarmory.entity.CivilianCarEntity>> ASSAULT_BOAT =
+            civilianCar("assault_boat", 3.0f, 2.0f);
+
     private static RegistryObject<EntityType<uk.iwaservice.sbwarmory.entity.CivilianCarEntity>> civilianCar(
             String id, float width, float height) {
         return vehicle(id, uk.iwaservice.sbwarmory.entity.CivilianCarEntity::new, width, height);
@@ -352,6 +355,7 @@ public final class ModRegistry {
                 output.accept(com.atsuishio.superbwarfare.item.container.ContainerBlockItem.createInstance(LUXURY_SEDAN.get()));
                 output.accept(com.atsuishio.superbwarfare.item.container.ContainerBlockItem.createInstance(PROBOX_MG.get()));
                 output.accept(com.atsuishio.superbwarfare.item.container.ContainerBlockItem.createInstance(HOVERCRAFT.get()));
+                output.accept(com.atsuishio.superbwarfare.item.container.ContainerBlockItem.createInstance(ASSAULT_BOAT.get()));
             })
             .build());
 

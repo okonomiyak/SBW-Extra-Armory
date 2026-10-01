@@ -24,8 +24,10 @@ public class SbwArmoryMod {
             e.add(ModRegistry.LUXURY_SEDAN);
             e.add(ModRegistry.PROBOX_MG);
             e.add(ModRegistry.HOVERCRAFT);
+            e.add(ModRegistry.ASSAULT_BOAT);
         });
         ModNetworking.register();
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(SbwCompat::onLoadingJson);
         ModLoadingContext.get().registerConfig(Type.SERVER, uk.iwaservice.sbwarmory.ModConfig.SPEC);
     }
 }
