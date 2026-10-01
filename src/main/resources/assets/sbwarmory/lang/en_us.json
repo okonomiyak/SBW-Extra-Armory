@@ -44,6 +44,7 @@
   "item.sbwarmory.vehicle_battery_pack.tooltip": "Just carry it - keeps any vehicle you're riding fully charged.",
   "entity.sbwarmory.cruise_missile": "Cruise Missile",
   "itemGroup.sbwarmory": "SBW Extra Armory",
+  "itemGroup.sbwarmory.vehicles": "SBW Extra Armory: Vehicles",
   "hud.sbwarmory.distance": "Distance",
   "key.categories.sbwarmory": "SBW Extra Armory",
   "key.sbwarmory.toggle_night_vision": "Toggle Night Vision",

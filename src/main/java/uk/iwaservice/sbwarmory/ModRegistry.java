@@ -319,8 +319,8 @@ public final class ModRegistry {
                         .build(id));
     }
 
-    public static final RegistryObject<CreativeModeTab> TAB =TABS.register("main", () -> CreativeModeTab.builder()
-            .title(Component.translatable("itemGroup.smokelauncher"))
+    public static final RegistryObject<CreativeModeTab> TAB = TABS.register("main", () -> CreativeModeTab.builder()
+            .title(Component.translatable("itemGroup.sbwarmory"))
             .icon(() -> new ItemStack(TAB_ICON_ITEM.get()))
             .displayItems((params, output) -> {
                 output.accept(SMOKE_CLUSTER_GRENADE_ITEM.get());
@@ -348,14 +348,20 @@ public final class ModRegistry {
                 output.accept(CONCRETE_BARRIER_ITEM.get());
                 output.accept(CONCRETE_BLOCK_ITEM.get());
                 output.accept(INFINITE_AMMO_BOX_ITEM.get());
+            })
+            .build());
+
+    /** Our vehicles, each as an SBW container (place it to deploy the vehicle), plus the vehicle refill items. */
+    public static final RegistryObject<CreativeModeTab> VEHICLE_TAB = TABS.register("vehicles", () -> CreativeModeTab.builder()
+            .title(Component.translatable("itemGroup.sbwarmory.vehicles"))
+            .icon(() -> com.atsuishio.superbwarfare.item.container.ContainerBlockItem.createInstance(PROBOX_WAGON.get()))
+            .withTabsBefore(TAB.getKey())
+            .displayItems((params, output) -> {
+                for (var vehicle : java.util.List.of(PROBOX_WAGON, HIACE_VAN, LUXURY_SEDAN, PROBOX_MG, HOVERCRAFT, ASSAULT_BOAT)) {
+                    output.accept(com.atsuishio.superbwarfare.item.container.ContainerBlockItem.createInstance(vehicle.get()));
+                }
                 output.accept(VEHICLE_AMMO_BOX_ITEM.get());
                 output.accept(VEHICLE_BATTERY_PACK_ITEM.get());
-                output.accept(com.atsuishio.superbwarfare.item.container.ContainerBlockItem.createInstance(PROBOX_WAGON.get()));
-                output.accept(com.atsuishio.superbwarfare.item.container.ContainerBlockItem.createInstance(HIACE_VAN.get()));
-                output.accept(com.atsuishio.superbwarfare.item.container.ContainerBlockItem.createInstance(LUXURY_SEDAN.get()));
-                output.accept(com.atsuishio.superbwarfare.item.container.ContainerBlockItem.createInstance(PROBOX_MG.get()));
-                output.accept(com.atsuishio.superbwarfare.item.container.ContainerBlockItem.createInstance(HOVERCRAFT.get()));
-                output.accept(com.atsuishio.superbwarfare.item.container.ContainerBlockItem.createInstance(ASSAULT_BOAT.get()));
             })
             .build());
 

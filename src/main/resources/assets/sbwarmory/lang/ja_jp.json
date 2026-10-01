@@ -44,6 +44,7 @@
   "item.sbwarmory.vehicle_battery_pack.tooltip": "持っているだけで乗ってる乗り物の電力が常に満タン。",
   "entity.sbwarmory.cruise_missile": "巡航ミサイル",
   "itemGroup.sbwarmory": "SBW Extra Armory",
+  "itemGroup.sbwarmory.vehicles": "SBW Extra Armory: 車両",
   "hud.sbwarmory.distance": "距離",
   "key.categories.sbwarmory": "SBW Extra Armory",
   "key.sbwarmory.toggle_night_vision": "暗視ゴーグルのON/OFF",
