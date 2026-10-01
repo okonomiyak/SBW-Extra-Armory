@@ -23,6 +23,11 @@
   "item.sbwarmory.iced_tea": "Iced Tea",
   "item.sbwarmory.coma_grenade": "Coma Grenade",
   "entity.sbwarmory.coma_grenade": "Coma Grenade",
+  "effect.sbwarmory.flashbang": "Flashbang",
+  "item.sbwarmory.flashbang_grenade": "Flashbang Grenade",
+  "entity.sbwarmory.flashbang_grenade": "Flashbang Grenade",
+  "item.sbwarmory.stun_grenade": "Stun Grenade",
+  "entity.sbwarmory.stun_grenade": "Stun Grenade",
   "entity.sbwarmory.active_defense_system": "Active Defense System",
   "item.sbwarmory.night_vision_goggles": "Night Vision Goggles",
   "item.sbwarmory.night_vision_goggles_red": "Night Vision Goggles (Red)",
@@ -42,5 +47,10 @@
   "hud.sbwarmory.distance": "Distance",
   "key.categories.sbwarmory": "SBW Extra Armory",
   "key.sbwarmory.toggle_night_vision": "Toggle Night Vision",
-  "chat.sbwarmory.cruise_missile_inbound": "§c§lCruise missile inbound!"
+  "chat.sbwarmory.cruise_missile_inbound": "§c§lCruise missile inbound!",
+  "entity.sbwarmory.probox_wagon": "Probox Wagon",
+  "entity.sbwarmory.hiace_van": "HiAce Van",
+  "entity.sbwarmory.luxury_sedan": "Luxury Sedan",
+  "entity.sbwarmory.probox_mg": "Probox Technical (7.62mm MG)",
+  "entity.sbwarmory.hovercraft": "Armed Hovercraft"
 }

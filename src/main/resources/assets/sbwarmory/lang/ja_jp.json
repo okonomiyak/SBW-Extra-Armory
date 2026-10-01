@@ -23,6 +23,11 @@
   "item.sbwarmory.iced_tea": "アイスティー",
   "item.sbwarmory.coma_grenade": "昏睡グレネード",
   "entity.sbwarmory.coma_grenade": "昏睡グレネード",
+  "effect.sbwarmory.flashbang": "フラッシュバン",
+  "item.sbwarmory.flashbang_grenade": "フラッシュバン",
+  "entity.sbwarmory.flashbang_grenade": "フラッシュバン",
+  "item.sbwarmory.stun_grenade": "スタングレネード",
+  "entity.sbwarmory.stun_grenade": "スタングレネード",
   "entity.sbwarmory.active_defense_system": "アクティブ防御システム",
   "item.sbwarmory.night_vision_goggles": "暗視ゴーグル",
   "item.sbwarmory.night_vision_goggles_red": "暗視ゴーグル(赤)",
@@ -42,5 +47,10 @@
   "hud.sbwarmory.distance": "距離",
   "key.categories.sbwarmory": "SBW Extra Armory",
   "key.sbwarmory.toggle_night_vision": "暗視ゴーグルのON/OFF",
-  "chat.sbwarmory.cruise_missile_inbound": "§c§l巡航ミサイル接近中！"
+  "chat.sbwarmory.cruise_missile_inbound": "§c§l巡航ミサイル接近中！",
+  "entity.sbwarmory.probox_wagon": "プロボックス",
+  "entity.sbwarmory.hiace_van": "ハイエース",
+  "entity.sbwarmory.luxury_sedan": "黒塗りの高級車",
+  "entity.sbwarmory.probox_mg": "プロボックス 7.62mm機銃搭載型",
+  "entity.sbwarmory.hovercraft": "武装ホバークラフト"
 }

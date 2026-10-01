@@ -1,0 +1,351 @@
+{
+  "MaxHealth": 260,
+  "MaxEnergy": 500000,
+  "OBB": [
+    {
+      "Part": "Collision",
+      "Size": [
+        2.475,
+        0.701,
+        4.812
+      ],
+      "Position": [
+        0,
+        0.743,
+        0
+      ]
+    },
+    {
+      "Size": [
+        1.375,
+        0.997,
+        1.788
+      ],
+      "Position": [
+        0.0,
+        2.166,
+        1.238
+      ]
+    },
+    {
+      "Size": [
+        1.471,
+        1.471,
+        0.516
+      ],
+      "Position": [
+        0.0,
+        2.681,
+        -3.403
+      ]
+    },
+    {
+      "Part": "Turret",
+      "Size": [
+        0.4,
+        0.35,
+        0.6
+      ],
+      "Position": [
+        0,
+        0.12,
+        0.1
+      ],
+      "Transform": "Turret",
+      "Rotation": "Turret"
+    }
+  ],
+  "TurretControllerIndex": 1,
+  "Seats": [
+    {
+      "IsEnclosed": true,
+      "Transform": "Vehicle",
+      "Position": [
+        -0.619,
+        1.01,
+        1.547
+      ],
+      "RotateWithVehicle": true,
+      "MinPitch": -60,
+      "MaxPitch": 60,
+      "MinYaw": -90,
+      "MaxYaw": 90,
+      "DismountInfo": {
+        "Transform": "Vehicle",
+        "Position": [
+          -2.9,
+          1.203,
+          1.547
+        ]
+      }
+    },
+    {
+      "Transform": "Turret",
+      "Position": [
+        0,
+        -1.409,
+        -0.6
+      ],
+      "MinPitch": -8,
+      "MaxPitch": 60,
+      "Pose": "MachineGunStand",
+      "CameraPos": {
+        "Transform": "Barrel",
+        "UseFixedCameraPos": true,
+        "Position": [
+          0,
+          0.25,
+          -0.9
+        ],
+        "Direction": "Barrel"
+      },
+      "Weapons": [
+        "MachineGun"
+      ],
+      "Sensitivity": [
+        0.7,
+        0.75,
+        1
+      ],
+      "DismountInfo": {
+        "Transform": "Vehicle",
+        "Position": [
+          2.9,
+          1.203,
+          0
+        ]
+      }
+    },
+    {
+      "IsEnclosed": true,
+      "Transform": "Vehicle",
+      "Position": [
+        0.619,
+        1.21,
+        1.547
+      ],
+      "RotateWithVehicle": true,
+      "MinPitch": -60,
+      "MaxPitch": 60,
+      "MinYaw": -90,
+      "MaxYaw": 90,
+      "DismountInfo": {
+        "Transform": "Vehicle",
+        "Position": [
+          2.9,
+          1.203,
+          1.547
+        ]
+      }
+    },
+    {
+      "IsEnclosed": true,
+      "Transform": "Vehicle",
+      "Position": [
+        -0.481,
+        1.21,
+        -0.172
+      ],
+      "RotateWithVehicle": true,
+      "MinPitch": -60,
+      "MaxPitch": 60,
+      "MinYaw": -90,
+      "MaxYaw": 90,
+      "DismountInfo": {
+        "Transform": "Vehicle",
+        "Position": [
+          -2.9,
+          1.203,
+          -0.172
+        ]
+      }
+    },
+    {
+      "IsEnclosed": true,
+      "Transform": "Vehicle",
+      "Position": [
+        0.481,
+        1.21,
+        -0.172
+      ],
+      "RotateWithVehicle": true,
+      "MinPitch": -60,
+      "MaxPitch": 60,
+      "MinYaw": -90,
+      "MaxYaw": 90,
+      "DismountInfo": {
+        "Transform": "Vehicle",
+        "Position": [
+          2.9,
+          1.203,
+          -0.172
+        ]
+      }
+    }
+  ],
+  "Weapons": {
+    "MachineGun": {
+      "DefaultFireMode": "Auto",
+      "AvailableFireModes": "Auto",
+      "DefaultZoom": 1.5,
+      "HeatPerShoot": 4,
+      "NaturalCooldown": 1,
+      "CrosshairColor": "0xFFFFFF",
+      "AmmoType": "@RifleAmmo",
+      "Projectile": "superbwarfare:projectile",
+      "RPM": 600,
+      "Damage": 9.5,
+      "BypassesArmor": 0.3,
+      "Velocity": 30,
+      "ShootAnimationTime": 1,
+      "RecoilTime": 20,
+      "RecoilForce": 0.08,
+      "Spread": 0.5,
+      "ShootPos": {
+        "Transform": "Barrel",
+        "Positions": [
+          [
+            0,
+            0.017,
+            1.169
+          ]
+        ],
+        "Directions": [
+          "Barrel"
+        ]
+      },
+      "Crosshair": "@VehicleCommonGun",
+      "Name": "weapon.superbwarfare.7_62mm_coax",
+      "SoundInfo": {
+        "Fire1P": "superbwarfare:coax_fire_1p",
+        "Fire3P": "superbwarfare:m_60_fire_3p",
+        "Fire3PFar": "superbwarfare:m_60_far",
+        "Fire3PVeryFar": "superbwarfare:m_60_veryfar",
+        "Change": "superbwarfare:into_cannon"
+      },
+      "SoundRadius": 12,
+      "Icon": "superbwarfare:textures/overlay/vehicle/weapon/icons/gun_7_62mm.png"
+    }
+  },
+  "TurretPos": [
+    0,
+    3.266,
+    1.1
+  ],
+  "TurretTurnSpeed": [
+    14,
+    14
+  ],
+  "TurretPitchRange": [
+    -8,
+    60
+  ],
+  "BarrelPos": [
+    0,
+    0.11,
+    0
+  ],
+  "HasDecoy": true,
+  "Mass": 6,
+  "RotateOffsetHeight": 1.6,
+  "DamageModifiers": [
+    "All - 2",
+    "minecraft:lava + 2",
+    "All * 0.6",
+    "minecraft:arrow * 0.2",
+    "minecraft:trident * 0.4",
+    "minecraft:mob_attack * 0.4",
+    "minecraft:mob_attack_no_aggro * 0.4",
+    "minecraft:mob_projectile * 0.4",
+    "minecraft:player_attack * 0.4",
+    "minecraft:lava * 4",
+    "@minecraft:tnt * 3",
+    "@minecraft:tnt_minecart * 3",
+    "minecraft:explosion * 5",
+    "minecraft:player_explosion * 5",
+    "superbwarfare:projectile_hit * 1.1",
+    "superbwarfare:grapeshot_hit * 0.8",
+    "@#superbwarfare:aerial_bomb * 2",
+    "#superbwarfare:projectile * 0.4",
+    "#superbwarfare:projectile_absolute * 0.6",
+    "superbwarfare:vehicle_strike * 1.4",
+    "@superbwarfare:cannon_shell * 1.3",
+    "@superbwarfare:c4 * 2",
+    "@superbwarfare:small_cannon_shell * 0.75",
+    "@superbwarfare:gun_grenade * 3",
+    "@superbwarfare:rgo_grenade * 6",
+    "@superbwarfare:hand_grenade * 5",
+    "@superbwarfare:mortar_shell * 4",
+    "@#superbwarfare:aa_missile * 1.5"
+  ],
+  "DestroyInfo": {
+    "ExplosionDamage": 80,
+    "ExplosionRadius": 5
+  },
+  "EngineType": "Ship",
+  "EngineInfo": {
+    "Buoyancy": 0.09,
+    "EnergyCostRate": 48,
+    "MaxForwardSpeedRate": 1.5,
+    "MaxBackwardSpeedRate": 1.0,
+    "Increment": 0.035,
+    "Decrement": 0.022,
+    "SteeringSpeed": 0.15,
+    "BodyRollRate": 0.8
+  },
+  "VehicleContainerType": "Medium",
+  "ThirdPersonCameraPos": [
+    0,
+    1.2,
+    7.5
+  ],
+  "VehicleIcon": "sbwarmory:textures/vehicle_icon/hovercraft_icon.png",
+  "ContainerIcon": "superbwarfare:textures/gui/vehicle/type/water.png",
+  "Type": "Boat",
+  "CollisionLevel": {
+    "Level": 3,
+    "PowerLimits": [
+      [
+        0,
+        0,
+        true
+      ],
+      [
+        0,
+        0,
+        true
+      ],
+      [
+        1,
+        0.15,
+        false
+      ]
+    ]
+  },
+  "EngineSound": "superbwarfare:speedboat_engine",
+  "InertiaRotateRate": 2,
+  "UpStep": 1.1,
+  "TerrainCompat": [
+    [
+      1.98,
+      0,
+      3.85
+    ],
+    [
+      -1.98,
+      0,
+      3.85
+    ],
+    [
+      1.98,
+      0,
+      -3.85
+    ],
+    [
+      -1.98,
+      0,
+      -3.85
+    ]
+  ],
+  "TerrainCompatRotateRate": 1.5
+}

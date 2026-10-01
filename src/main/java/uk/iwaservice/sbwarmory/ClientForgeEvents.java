@@ -105,6 +105,17 @@ public final class ClientForgeEvents {
         event.setFOV(event.getFOV() / zoomLevel);
     }
 
+    /** LOWEST so the white-out also covers the scope/goggle overlays drawn in {@link #onRenderGui}. */
+    @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.LOWEST)
+    public static void onRenderFlashbang(RenderGuiEvent.Post event) {
+        Player player = Minecraft.getInstance().player;
+        var flash = player == null ? null : player.getEffect(uk.iwaservice.sbwarmory.ModRegistry.FLASHBANG.get());
+        if (flash == null) return;
+        float alpha = Math.min(1f, flash.getDuration() / (float) uk.iwaservice.sbwarmory.effect.FlashbangMobEffect.FADE_TICKS);
+        GuiGraphics graphics = event.getGuiGraphics();
+        graphics.fill(0, 0, graphics.guiWidth(), graphics.guiHeight(), (Math.round(alpha * 255) << 24) | 0xFFFFFF);
+    }
+
     @SubscribeEvent
     public static void onRenderGui(RenderGuiEvent.Post event) {
         Minecraft mc = Minecraft.getInstance();

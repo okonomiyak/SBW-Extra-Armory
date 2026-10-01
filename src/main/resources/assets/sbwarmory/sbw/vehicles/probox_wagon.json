@@ -1,0 +1,8 @@
+{
+  "Models": [
+    {
+      "Model": "sbwarmory:models/bedrock/vehicle/probox_wagon.geo.json",
+      "Texture": "sbwarmory:textures/bedrock/vehicle/probox_wagon.png"
+    }
+  ]
+}

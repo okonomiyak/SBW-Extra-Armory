@@ -1,0 +1,9 @@
+{
+  "Animation": "sbwarmory:animations/bedrock/vehicle/machine_gun_flare.animation.json",
+  "Models": [
+    {
+      "Model": "sbwarmory:models/bedrock/vehicle/hovercraft.geo.json",
+      "Texture": "sbwarmory:textures/bedrock/vehicle/hovercraft.png"
+    }
+  ]
+}

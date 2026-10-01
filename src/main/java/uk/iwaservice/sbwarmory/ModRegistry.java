@@ -56,6 +56,9 @@ public final class ModRegistry {
     public static final RegistryObject<MobEffect> COMA = MOB_EFFECTS.register("coma",
             uk.iwaservice.sbwarmory.effect.ComaMobEffect::new);
 
+    public static final RegistryObject<MobEffect> FLASHBANG = MOB_EFFECTS.register("flashbang",
+            uk.iwaservice.sbwarmory.effect.FlashbangMobEffect::new);
+
     public static final RegistryObject<Item> ICED_TEA_ITEM = ITEMS.register("iced_tea",
             () -> new Item(new Item.Properties().food(new net.minecraft.world.food.FoodProperties.Builder()
                     .nutrition(2)
@@ -151,6 +154,30 @@ public final class ModRegistry {
 
     public static final RegistryObject<Item> COMA_GRENADE_ITEM = ITEMS.register("coma_grenade",
             () -> new uk.iwaservice.sbwarmory.item.ComaGrenadeItem(new Item.Properties().stacksTo(16)));
+
+    public static final RegistryObject<EntityType<uk.iwaservice.sbwarmory.entity.FlashbangGrenadeEntity>> FLASHBANG_GRENADE = ENTITY_TYPES.register(
+            "flashbang_grenade",
+            () -> EntityType.Builder.<uk.iwaservice.sbwarmory.entity.FlashbangGrenadeEntity>of(
+                            uk.iwaservice.sbwarmory.entity.FlashbangGrenadeEntity::new, MobCategory.MISC)
+                    .sized(0.2f, 0.2f)
+                    .clientTrackingRange(4)
+                    .updateInterval(10)
+                    .build("flashbang_grenade"));
+
+    public static final RegistryObject<Item> FLASHBANG_GRENADE_ITEM = ITEMS.register("flashbang_grenade",
+            () -> new uk.iwaservice.sbwarmory.item.FlashbangGrenadeItem(new Item.Properties().stacksTo(16)));
+
+    public static final RegistryObject<EntityType<uk.iwaservice.sbwarmory.entity.StunGrenadeEntity>> STUN_GRENADE = ENTITY_TYPES.register(
+            "stun_grenade",
+            () -> EntityType.Builder.<uk.iwaservice.sbwarmory.entity.StunGrenadeEntity>of(
+                            uk.iwaservice.sbwarmory.entity.StunGrenadeEntity::new, MobCategory.MISC)
+                    .sized(0.2f, 0.2f)
+                    .clientTrackingRange(4)
+                    .updateInterval(10)
+                    .build("stun_grenade"));
+
+    public static final RegistryObject<Item> STUN_GRENADE_ITEM = ITEMS.register("stun_grenade",
+            () -> new uk.iwaservice.sbwarmory.item.StunGrenadeItem(new Item.Properties().stacksTo(16)));
 
     public static final RegistryObject<Item> SRAW_LAUNCHER_ITEM = ITEMS.register("sraw_launcher",
             SrawLauncherItem::new);
@@ -257,7 +284,39 @@ public final class ModRegistry {
                     .updateInterval(Integer.MAX_VALUE)
                     .build("mushroom_cloud"));
 
-    public static final RegistryObject<CreativeModeTab> TAB = TABS.register("main", () -> CreativeModeTab.builder()
+    public static final RegistryObject<EntityType<uk.iwaservice.sbwarmory.entity.CivilianCarEntity>> PROBOX_WAGON =
+            civilianCar("probox_wagon", 2.4f, 2.1f);
+
+    public static final RegistryObject<EntityType<uk.iwaservice.sbwarmory.entity.CivilianCarEntity>> HIACE_VAN =
+            civilianCar("hiace_van", 2.4f, 2.9f);
+
+    public static final RegistryObject<EntityType<uk.iwaservice.sbwarmory.entity.CivilianCarEntity>> LUXURY_SEDAN =
+            civilianCar("luxury_sedan", 2.7f, 2.6f);
+
+    public static final RegistryObject<EntityType<uk.iwaservice.sbwarmory.entity.CivilianCarEntity>> PROBOX_MG =
+            civilianCar("probox_mg", 2.4f, 2.1f);
+
+    public static final RegistryObject<EntityType<uk.iwaservice.sbwarmory.entity.HovercraftEntity>> HOVERCRAFT =
+            vehicle("hovercraft", uk.iwaservice.sbwarmory.entity.HovercraftEntity::new, 3.0f, 2.0f);
+
+    private static RegistryObject<EntityType<uk.iwaservice.sbwarmory.entity.CivilianCarEntity>> civilianCar(
+            String id, float width, float height) {
+        return vehicle(id, uk.iwaservice.sbwarmory.entity.CivilianCarEntity::new, width, height);
+    }
+
+    // Builder settings mirror SBW's own ModEntities.vehicle() helper.
+    private static <T extends com.atsuishio.superbwarfare.entity.vehicle.base.VehicleEntity> RegistryObject<EntityType<T>> vehicle(
+            String id, EntityType.EntityFactory<T> factory, float width, float height) {
+        return ENTITY_TYPES.register(id,
+                () -> EntityType.Builder.of(factory, MobCategory.MISC)
+                        .sized(width, height)
+                        .setTrackingRange(512)
+                        .setUpdateInterval(1)
+                        .fireImmune()
+                        .build(id));
+    }
+
+    public static final RegistryObject<CreativeModeTab> TAB =TABS.register("main", () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.smokelauncher"))
             .icon(() -> new ItemStack(TAB_ICON_ITEM.get()))
             .displayItems((params, output) -> {
@@ -277,6 +336,8 @@ public final class ModRegistry {
                 output.accept(ACTIVE_DEFENSE_SYSTEM_ITEM.get());
                 output.accept(ICED_TEA_ITEM.get());
                 output.accept(COMA_GRENADE_ITEM.get());
+                output.accept(FLASHBANG_GRENADE_ITEM.get());
+                output.accept(STUN_GRENADE_ITEM.get());
                 output.accept(NIGHT_VISION_GOGGLES_ITEM.get());
                 output.accept(NIGHT_VISION_GOGGLES_RED_ITEM.get());
                 output.accept(HELMET_BLUE_ITEM.get());
@@ -286,6 +347,11 @@ public final class ModRegistry {
                 output.accept(INFINITE_AMMO_BOX_ITEM.get());
                 output.accept(VEHICLE_AMMO_BOX_ITEM.get());
                 output.accept(VEHICLE_BATTERY_PACK_ITEM.get());
+                output.accept(com.atsuishio.superbwarfare.item.container.ContainerBlockItem.createInstance(PROBOX_WAGON.get()));
+                output.accept(com.atsuishio.superbwarfare.item.container.ContainerBlockItem.createInstance(HIACE_VAN.get()));
+                output.accept(com.atsuishio.superbwarfare.item.container.ContainerBlockItem.createInstance(LUXURY_SEDAN.get()));
+                output.accept(com.atsuishio.superbwarfare.item.container.ContainerBlockItem.createInstance(PROBOX_MG.get()));
+                output.accept(com.atsuishio.superbwarfare.item.container.ContainerBlockItem.createInstance(HOVERCRAFT.get()));
             })
             .build());
 

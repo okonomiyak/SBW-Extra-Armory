@@ -17,6 +17,14 @@ public class SbwArmoryMod {
     public SbwArmoryMod() {
         var modBus = FMLJavaModLoadingContext.get().getModEventBus();
         ModRegistry.register(modBus);
+        // Lists our vehicles in SBW's own container tab, like SBW does for its built-in cars.
+        modBus.addListener((com.atsuishio.superbwarfare.api.event.RegisterContainersEvent e) -> {
+            e.add(ModRegistry.PROBOX_WAGON);
+            e.add(ModRegistry.HIACE_VAN);
+            e.add(ModRegistry.LUXURY_SEDAN);
+            e.add(ModRegistry.PROBOX_MG);
+            e.add(ModRegistry.HOVERCRAFT);
+        });
         ModNetworking.register();
         ModLoadingContext.get().registerConfig(Type.SERVER, uk.iwaservice.sbwarmory.ModConfig.SPEC);
     }

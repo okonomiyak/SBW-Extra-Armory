@@ -1,0 +1,9 @@
+{
+  "Animation": "sbwarmory:animations/bedrock/vehicle/machine_gun_flare.animation.json",
+  "Models": [
+    {
+      "Model": "sbwarmory:models/bedrock/vehicle/probox_mg.geo.json",
+      "Texture": "sbwarmory:textures/bedrock/vehicle/probox_mg.png"
+    }
+  ]
+}
