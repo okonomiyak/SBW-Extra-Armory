@@ -1,0 +1,24 @@
+GIMP Palette
+Name: motorcycle
+Columns: 10
+#
+ 88  94  61	olive main
+ 63  68  43	olive dark
+ 58  62  40	olive edge
+ 21  21  23	black
+ 25  25  26	tire black
+ 30  30  32	seat black
+ 38  40  42	dark gray
+110 112 114	engine gray
+120 120 120	plate frame gray
+117 121 127	chrome dark
+176 178 180	silver
+241 243 247	chrome light
+ 80  75  69	brown gray
+ 71  67  61	brown gray dark
+189  23  23	red
+238 140  20	orange
+ 20 110  60	plate green
+236 238 232	plate white
+209 215 218	headlight lens
+250 252 255	headlight white
