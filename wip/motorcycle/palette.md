@@ -43,3 +43,15 @@
 | `motorcycle.hex` | 1行1色のHEXリスト (Lospec形式、Aseprite / Blockbench 等) |
 | `motorcycle_palette.png` | 色見本の一覧画像 |
 | `motorcycle_palette_1px.png` | 1色1ピクセル (20×1) のパレット画像 |
+
+## 拡張パレット (89色)
+元の20色に、8系統 × 10段階の明暗ランプを足したもの。各ランプは元の色(プレビューで太枠)を必ず含み、そこから明度を振って作った生成色。暗い側はわずかに寒色、明るい側はわずかに暖色へずらしてある。
+
+系統: オリーブ / オリーブ(暗) / ニュートラル / クローム / ブラウングレー / 赤 / オレンジ / 緑
+
+| ファイル | 用途 |
+|---|---|
+| `motorcycle_extended.gpl` | GIMP / Aseprite / Krita / Blockbench 等 |
+| `motorcycle_extended.hex` | HEXリスト |
+| `motorcycle_extended_palette.png` | プレビュー (上: 元の20色、下: ランプ) |
+| `motorcycle_extended_1px.png` | 1色1ピクセル (89×1) |
