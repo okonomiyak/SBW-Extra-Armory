@@ -255,6 +255,12 @@ SuperbWarfareの弾薬/乗り物系リソースを「持っているだけ」で
 - 「SBW Extra Armory」(`itemGroup.sbwarmory`): 車両以外。以前はタイトルキーが`itemGroup.smokelauncher`で未翻訳だったのを修正。
 - 「SBW Extra Armory: 車両」(`itemGroup.sbwarmory.vehicles`): 車両7種のコンテナ+`vehicle_ammo_box`+`vehicle_battery_pack`。アイコンはプロボックスのコンテナ。
 
+### 10.5 バイクのモデル・テクスチャ差し替え (編集中)
+- バイク(`motorcycle`)の見た目を作り直し中。作業用コピーは`wip/motorcycle/`(jarに含まれない)。本番の`assets/sbwarmory/models/bedrock/vehicle/motorcycle.geo.json`と`textures/bedrock/vehicle/motorcycle.png`はまだ旧版のまま。
+- `wip/motorcycle/`の中身: モデル/テクスチャのコピー、`NOTES.md`(戻し先と守るべき点)、使用色パレット(`palette.md`、`motorcycle.gpl`/`.hex`の20色、`motorcycle_extended.*`の89色)。
+- 差し替え時の制約: ボーン名`root`/`body`/`steering`/`engine`/`rear`/`lights`/`Wheel`/`wheelL0Turn`/`wheelL1`は変えない、identifierは`geometry.motorcycle`のまま、テクスチャサイズを変えたらgeo.jsonの`texture_width`/`texture_height`も合わせる。車体寸法や座る位置を大きく変えたら`data/sbwarmory/sbw/vehicles/motorcycle.json`の`OBB`/`Seats`も調整。
+- 円形パーツ(タイヤ等)は同じ直方体をpivot=円の中心で回転複製して作る(現行タイヤは12個×30°、開始角15°)。
+
 ---
 
 ## 11. SuperbWarfare 0.8.9.0 互換 (`SbwCompat`)
@@ -300,6 +306,7 @@ SuperbWarfareの弾薬/乗り物系リソースを「持っているだけ」で
 - SRAWランチャーの`GeoModel.getAnimation`NPEクラッシュ(2.2節参照、調査中断中)。
 - `beast_missile_designator`/`active_defense_system`/`coma_grenade`/`flashbang_grenade`/`stun_grenade`/`iced_tea`/各種設計図アイテム/9章の無限系アイテム3種のクラフトレシピ未設定(現状クリエイティブのみ)。
 - 車両まわりで実機未確認の点: バイクの傾く向きと深く傾いたときの車高(`Collision`箱も傾くので浮く可能性)、0.8.9.0での車両の描画・乗車(起動とデータ読込のみ確認済み)。
+- バイクのモデル・テクスチャ差し替えが編集中(10.5節)。本番ファイルは旧版のまま。
 - アサルトボート後部機銃のモデルが照準に追従しない(10.1節)。
 - フラッシュバンに耳鳴り/聴覚低下の演出なし。
 - `coma_grenade`のダメージ0仕様は意図的(スタン専用武器として設計)。ダメージも欲しい場合は要相談。
