@@ -1,0 +1,36 @@
+{
+  "ID": "sbwarmory:motorcycle",
+  "Pools": [
+    {
+      "Entries": [
+        {
+          "Chance": 0.5,
+          "Name": "superbwarfare:steel_block"
+        },
+        {
+          "Chance": 0.5,
+          "Name": "superbwarfare:wheel"
+        },
+        {
+          "Chance": 0.5,
+          "Name": "superbwarfare:motor"
+        },
+        {
+          "Chance": 0.2,
+          "Name": "superbwarfare:small_battery_pack"
+        }
+      ],
+      "Source": "superbwarfare:repair_tool",
+      "Type": "complete"
+    },
+    {
+      "Entries": [
+        {
+          "Chance": 0.25,
+          "Name": "superbwarfare:steel_block"
+        }
+      ],
+      "Type": "complete"
+    }
+  ]
+}

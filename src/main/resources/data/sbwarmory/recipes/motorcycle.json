@@ -1,0 +1,13 @@
+{
+  "type": "superbwarfare:vehicle_assembling",
+  "category": "civilian",
+  "inputs": [
+    "#forge:storage_blocks/steel",
+    "superbwarfare:small_battery_pack",
+    "2 superbwarfare:wheel",
+    "superbwarfare:motor"
+  ],
+  "result": {
+    "entity": "sbwarmory:motorcycle"
+  }
+}

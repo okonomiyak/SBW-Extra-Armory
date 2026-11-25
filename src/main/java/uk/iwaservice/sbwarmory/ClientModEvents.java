@@ -24,12 +24,45 @@ public final class ClientModEvents {
         event.registerEntityRenderer(ModRegistry.CLUSTER_GRENADE.get(), BasicProjectileRenderer::new);
         event.registerEntityRenderer(ModRegistry.SPRING_GRENADE.get(), SpringGrenadeEntityRenderer::new);
         event.registerEntityRenderer(ModRegistry.COMA_GRENADE.get(), ComaGrenadeEntityRenderer::new);
+        event.registerEntityRenderer(ModRegistry.FLASHBANG_GRENADE.get(), uk.iwaservice.sbwarmory.client.FlashbangGrenadeEntityRenderer::new);
+        event.registerEntityRenderer(ModRegistry.STUN_GRENADE.get(), uk.iwaservice.sbwarmory.client.StunGrenadeEntityRenderer::new);
         event.registerEntityRenderer(ModRegistry.THROWING_KNIFE.get(), ThrowingKnifeEntityRenderer::new);
         event.registerEntityRenderer(ModRegistry.SRAW_MISSILE.get(), BasicProjectileRenderer::new);
         event.registerEntityRenderer(ModRegistry.CRUISE_MISSILE.get(), BasicProjectileRenderer::new);
         event.registerEntityRenderer(ModRegistry.BEAST_MISSILE.get(), BasicProjectileRenderer::new);
         event.registerEntityRenderer(ModRegistry.MUSHROOM_CLOUD.get(), MushroomCloudEntityRenderer::new);
         event.registerEntityRenderer(ModRegistry.ACTIVE_DEFENSE_SYSTEM.get(), ActiveDefenseSystemRenderer::new);
+        SbwArmoryMod.LOGGER.info("Using {} SuperbWarfare vehicle renderers",
+                SbwCompat.LEGACY_VEHICLE_RENDERING ? "legacy (0.8.9.0, GeckoLib)" : "0.8.9.1+");
+        if (SbwCompat.LEGACY_VEHICLE_RENDERING) {
+            LegacyVehicleRenderers.register(event);
+        } else {
+            ModernVehicleRenderers.register(event);
+        }
+    }
+
+    /** SBW 0.8.9.1+. Kept in its own class so 0.8.9.0 (which lacks these renderers) never links it. */
+    private static final class ModernVehicleRenderers {
+        static void register(EntityRenderersEvent.RegisterRenderers event) {
+            for (var car : java.util.List.of(ModRegistry.PROBOX_WAGON, ModRegistry.HIACE_VAN, ModRegistry.LUXURY_SEDAN, ModRegistry.PROBOX_MG)) {
+                event.registerEntityRenderer(car.get(), com.atsuishio.superbwarfare.client.renderer.entity.BasicVehicleRenderer::new);
+            }
+            event.registerEntityRenderer(ModRegistry.MOTORCYCLE.get(), com.atsuishio.superbwarfare.client.renderer.entity.BasicVehicleRenderer::new);
+            // SBW's speedboat renderer spins move_propeller / move_rudder by bone name; no speedboat-specific casts.
+            event.registerEntityRenderer(ModRegistry.HOVERCRAFT.get(), com.atsuishio.superbwarfare.client.renderer.entity.SpeedBoatRenderer::new);
+            event.registerEntityRenderer(ModRegistry.ASSAULT_BOAT.get(), com.atsuishio.superbwarfare.client.renderer.entity.SpeedBoatRenderer::new);
+        }
+    }
+
+    /** SBW 0.8.9.0: GeckoLib-based VehicleRenderer. Boat fans/rudders don't animate here. */
+    private static final class LegacyVehicleRenderers {
+        static void register(EntityRenderersEvent.RegisterRenderers event) {
+            for (var car : java.util.List.of(ModRegistry.PROBOX_WAGON, ModRegistry.HIACE_VAN, ModRegistry.LUXURY_SEDAN, ModRegistry.PROBOX_MG, ModRegistry.ASSAULT_BOAT)) {
+                event.registerEntityRenderer(car.get(), uk.iwaservice.sbwarmory.client.LegacyVehicleRenderer::new);
+            }
+            event.registerEntityRenderer(ModRegistry.MOTORCYCLE.get(), uk.iwaservice.sbwarmory.client.LegacyVehicleRenderer::new);
+            event.registerEntityRenderer(ModRegistry.HOVERCRAFT.get(), uk.iwaservice.sbwarmory.client.LegacyVehicleRenderer::new);
+        }
     }
 
     @SubscribeEvent

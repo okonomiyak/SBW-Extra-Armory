@@ -1,0 +1,13 @@
+{
+  "Animation": "sbwarmory:animations/bedrock/vehicle/machine_gun_flare.animation.json",
+  "Models": [
+    {
+      "Model": "sbwarmory:models/bedrock/vehicle/assault_boat.geo.json",
+      "Texture": "sbwarmory:textures/bedrock/vehicle/assault_boat.png"
+    }
+  ],
+  "Model": {
+    "Model": "sbwarmory:geo/vehicle/assault_boat.geo.json",
+    "Texture": "sbwarmory:textures/bedrock/vehicle/assault_boat.png"
+  }
+}

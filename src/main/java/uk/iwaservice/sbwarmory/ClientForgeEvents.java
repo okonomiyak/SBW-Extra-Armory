@@ -5,8 +5,16 @@ import uk.iwaservice.sbwarmory.item.NightVisionGogglesItem;
 import uk.iwaservice.sbwarmory.network.FireCruiseMissilePacket;
 import uk.iwaservice.sbwarmory.network.ModNetworking;
 import uk.iwaservice.sbwarmory.network.ToggleNightVisionPacket;
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.BufferUploader;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -19,6 +27,7 @@ import net.minecraftforge.client.event.ViewportEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 
 /** Forge-bus client events (as opposed to {@link ClientModEvents}, which needs the mod bus). */
@@ -35,19 +44,12 @@ public final class ClientForgeEvents {
     private static final float SCOPE_SCALE = 1.35F;
     private static final float SCOPE_ASPECT = 21F / 9F; // the source texture is a wide oval, not square
 
-    // Our own shader: vanilla's built-in "green" effect (zero red/blue, keep only green - the classic
-    // NVG monochrome look) minus its "bits" pass, which posterizes/mosaics the image and looked too
-    // coarse/blocky for this.
-    private static final ResourceLocation NIGHT_VISION_SHADER =
-            new ResourceLocation(SbwArmoryMod.MODID, "shaders/post/night_vision.json");
-
     private static double zoomLevel = MIN_ZOOM;
     private static int fireHoldTicks = 0;
     private static boolean fireConsumed = false;
     // Cancelling the Pre event below stops vanilla's KeyMapping from ever seeing the press, so
     // keyAttack.isDown() would never go true - track the raw button state ourselves instead.
     private static boolean leftMouseHeld = false;
-    private static boolean nightVisionShaderActive = false;
 
     /** The player's currently-held {@link LaserDesignatorItem} stack while it's toggled to aim, or null. */
     private static ItemStack aimingStack(Player player) {
@@ -73,6 +75,28 @@ public final class ClientForgeEvents {
         return head.getItem() instanceof NightVisionGogglesItem && NightVisionGogglesItem.isActive(head);
     }
 
+    /**
+     * Multiplies the already-rendered scene by pure green (DST_COLOR * ZERO blend) instead of just
+     * alpha-blending a green haze on top - this keeps each pixel's own brightness (via its green
+     * channel) while zeroing red/blue, giving the grayscale-into-green "thermal/FLIR" look real NVG
+     * footage has, rather than a flat tinted fog. GuiGraphics#fill always resets to the default alpha
+     * blend func internally, so this bypasses it and draws the quad directly.
+     */
+    private static void drawGreenMultiplyOverlay(GuiGraphics graphics, int x1, int y1, int x2, int y2) {
+        RenderSystem.enableBlend();
+        RenderSystem.blendFunc(GlStateManager.SourceFactor.DST_COLOR, GlStateManager.DestFactor.ZERO);
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        Matrix4f matrix = graphics.pose().last().pose();
+        BufferBuilder buffer = Tesselator.getInstance().getBuilder();
+        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+        buffer.vertex(matrix, x1, y2, 0).color(0, 255, 0, 255).endVertex();
+        buffer.vertex(matrix, x2, y2, 0).color(0, 255, 0, 255).endVertex();
+        buffer.vertex(matrix, x2, y1, 0).color(0, 255, 0, 255).endVertex();
+        buffer.vertex(matrix, x1, y1, 0).color(0, 255, 0, 255).endVertex();
+        BufferUploader.drawWithShader(buffer.end());
+        RenderSystem.defaultBlendFunc();
+    }
+
     @SubscribeEvent
     public static void onComputeFov(ViewportEvent.ComputeFov event) {
         if (aimingStack(Minecraft.getInstance().player) == null) {
@@ -81,17 +105,32 @@ public final class ClientForgeEvents {
         event.setFOV(event.getFOV() / zoomLevel);
     }
 
+    /** LOWEST so the white-out also covers the scope/goggle overlays drawn in {@link #onRenderGui}. */
+    @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.LOWEST)
+    public static void onRenderFlashbang(RenderGuiEvent.Post event) {
+        Player player = Minecraft.getInstance().player;
+        var flash = player == null ? null : player.getEffect(uk.iwaservice.sbwarmory.ModRegistry.FLASHBANG.get());
+        if (flash == null) return;
+        float alpha = Math.min(1f, flash.getDuration() / (float) uk.iwaservice.sbwarmory.effect.FlashbangMobEffect.FADE_TICKS);
+        GuiGraphics graphics = event.getGuiGraphics();
+        graphics.fill(0, 0, graphics.guiWidth(), graphics.guiHeight(), (Math.round(alpha * 255) << 24) | 0xFFFFFF);
+    }
+
     @SubscribeEvent
     public static void onRenderGui(RenderGuiEvent.Post event) {
         Minecraft mc = Minecraft.getInstance();
         Player player = mc.player;
-        if (aimingStack(player) == null) {
-            return;
-        }
-
         GuiGraphics graphics = event.getGuiGraphics();
         int screenWidth = mc.getWindow().getGuiScaledWidth();
         int screenHeight = mc.getWindow().getGuiScaledHeight();
+
+        if (wearingActiveGoggles(player) && mc.options.getCameraType().isFirstPerson()) {
+            drawGreenMultiplyOverlay(graphics, 0, 0, screenWidth, screenHeight);
+        }
+
+        if (aimingStack(player) == null) {
+            return;
+        }
 
         // Wide oval scope mask, same shape/texture SuperbWarfare's own spyglass and artillery
         // indicator use. Passing the draw size as the "texture size" too forces a full 0-1 UV
@@ -153,16 +192,11 @@ public final class ClientForgeEvents {
         }
         Minecraft mc = Minecraft.getInstance();
 
-        boolean wantsNightVisionShader = wearingActiveGoggles(mc.player) && mc.options.getCameraType().isFirstPerson();
-        if (wantsNightVisionShader) {
-            // Reasserted every tick (not just on the on/off edge): something else touching the
-            // current post-process effect slot (another mod, or vanilla's own effect handling) can
-            // silently knock ours out without notifying us, which left it stuck off on some setups.
-            mc.gameRenderer.loadEffect(NIGHT_VISION_SHADER);
-        } else if (nightVisionShaderActive) {
-            mc.gameRenderer.shutdownEffect();
+        // The flashbang white-out is a HUD layer, and vanilla skips the whole HUD while it's hidden (F1) -
+        // un-hide it while flashed so F1 can't be used to dodge the effect.
+        if (mc.player != null && mc.options.hideGui && mc.player.hasEffect(ModRegistry.FLASHBANG.get())) {
+            mc.options.hideGui = false;
         }
-        nightVisionShaderActive = wantsNightVisionShader;
 
         if (mc.player != null && mc.player.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.HEAD).getItem()
                 instanceof NightVisionGogglesItem) {

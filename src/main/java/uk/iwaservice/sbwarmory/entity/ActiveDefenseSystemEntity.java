@@ -24,10 +24,10 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 /**
  * A stationary defensive post: every tick, destroys any grenade, primed TNT, or actively-swelling
- * creeper that comes within range before it can detonate. Deliberately narrow-scoped - RPG/SRAW/
- * Javelin and our own cruise/beast missiles are all explicitly left alone (see {@link #isThreat}).
- * Fragile by design (low health, configurable) and rate-limited so it can't shrug off a spam attack
- * for free.
+ * creeper that comes within range before it can detonate - including LesRaisins Tactical Equipments'
+ * grenades, if that mod happens to be installed. Deliberately narrow-scoped - RPG/SRAW/Javelin and
+ * our own cruise/beast missiles are all explicitly left alone (see {@link #isThreat}). Fragile by
+ * design (low health, configurable) and rate-limited so it can't shrug off a spam attack for free.
  */
 public class ActiveDefenseSystemEntity extends Entity implements GeoEntity {
 
@@ -77,6 +77,22 @@ public class ActiveDefenseSystemEntity extends Entity implements GeoEntity {
         }
     }
 
+    // Soft dependency on "LesRaisins Tactical Equipments" (me.xjqsh.lrtactical) - resolved by name,
+    // not a compile/build.gradle dependency, so this mod works fine whether or not that one is
+    // installed. me.xjqsh.lrtactical.entity.ThrowableItemEntity is the shared base every one of their
+    // thrown grenades (frag/smoke/sticky/stun/effect-cloud) extends; their lingering gas cloud left
+    // behind after detonation (SpEffectCloudEntity) extends vanilla AreaEffectCloud instead, so it's
+    // correctly excluded without needing to name it.
+    private static final Class<?> LRTACTICAL_THROWABLE_CLASS = resolveOptionalClass("me.xjqsh.lrtactical.entity.ThrowableItemEntity");
+
+    private static Class<?> resolveOptionalClass(String className) {
+        try {
+            return Class.forName(className);
+        } catch (ClassNotFoundException e) {
+            return null;
+        }
+    }
+
     /**
      * Grenades, primed TNT, and swelling creepers - explicitly NOT RPG/SRAW/Javelin. Our own cluster/
      * smoke-cluster grenades and vanilla 40mm rounds all extend {@link GunGrenadeEntity}, hand
@@ -95,6 +111,9 @@ public class ActiveDefenseSystemEntity extends Entity implements GeoEntity {
         }
         if (entity instanceof GunGrenadeEntity || entity instanceof HandGrenadeEntity
                 || entity instanceof M18SmokeGrenadeEntity || entity instanceof PrimedTnt) {
+            return true;
+        }
+        if (LRTACTICAL_THROWABLE_CLASS != null && LRTACTICAL_THROWABLE_CLASS.isInstance(entity)) {
             return true;
         }
         return entity instanceof Creeper creeper && creeper.getSwellDir() > 0;

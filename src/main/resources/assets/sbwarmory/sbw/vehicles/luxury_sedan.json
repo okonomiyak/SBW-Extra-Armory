@@ -1,0 +1,12 @@
+{
+  "Models": [
+    {
+      "Model": "sbwarmory:models/bedrock/vehicle/luxury_sedan.geo.json",
+      "Texture": "sbwarmory:textures/bedrock/vehicle/luxury_sedan.png"
+    }
+  ],
+  "Model": {
+    "Model": "sbwarmory:geo/vehicle/luxury_sedan.geo.json",
+    "Texture": "sbwarmory:textures/bedrock/vehicle/luxury_sedan.png"
+  }
+}
