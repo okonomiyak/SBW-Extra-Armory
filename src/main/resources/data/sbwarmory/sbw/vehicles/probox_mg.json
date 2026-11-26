@@ -117,8 +117,8 @@
       "Transform": "Vehicle",
       "Position": [
         -0.6875,
-        -0.01875,
-        0.4
+        0.48125,
+        0.15
       ],
       "RotateWithVehicle": true,
       "MinPitch": -60,
@@ -139,8 +139,8 @@
       "Transform": "Vehicle",
       "Position": [
         0.6875,
-        -0.01875,
-        0.4
+        0.48125,
+        0.15
       ],
       "RotateWithVehicle": true,
       "MinPitch": -60,
@@ -198,7 +198,7 @@
       "Transform": "Vehicle",
       "Position": [
         -0.6875,
-        -0.03125,
+        0.46875,
         -0.795
       ],
       "RotateWithVehicle": true,
@@ -220,7 +220,7 @@
       "Transform": "Vehicle",
       "Position": [
         0.6875,
-        -0.03125,
+        0.46875,
         -0.795
       ],
       "RotateWithVehicle": true,
