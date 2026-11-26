@@ -261,6 +261,11 @@ SuperbWarfareの弾薬/乗り物系リソースを「持っているだけ」で
 - 差し替え時の制約: ボーン名`root`/`body`/`steering`/`engine`/`rear`/`lights`/`Wheel`/`wheelL0Turn`/`wheelL1`は変えない、identifierは`geometry.motorcycle`のまま、テクスチャサイズを変えたらgeo.jsonの`texture_width`/`texture_height`も合わせる。車体寸法や座る位置を大きく変えたら`data/sbwarmory/sbw/vehicles/motorcycle.json`の`OBB`/`Seats`も調整。
 - 円形パーツ(タイヤ等)は同じ直方体をpivot=円の中心で回転複製して作る(現行タイヤは12個×30°、開始角15°)。
 
+### 10.6 窓の透過
+- 窓のある6車種(`probox_wagon`/`probox_mg`/`hiace_van`/`luxury_sedan`/`hovercraft`/`assault_boat`)は、geo.jsonの`glass`ボーンが参照するテクスチャ領域のアルファを元の約45%(243〜251→107〜114)に下げ、窓越しに`interior`が見えるようにした。RGBはそのまま(色付きガラス)。`glass`の領域は他のボーンと共有していないので、窓以外には影響しない。
+- 0.8.9.1+のSBWは車両本体を`RenderType.entityTranslucent`で描くので、テクスチャのアルファがそのまま半透明になる(SBW本体の`sodayo_pick_up`等も同じ方式)。0.8.9.0の旧描画(`LegacyVehicleRenderer`→SBWの`VehicleRenderer`)が半透明に対応しているかは未確認。
+- 透明度を変えたいときは、`glass`ボーンのUV領域のアルファだけを書き換える(新しい窓を足すときも`glass`ボーンに入れる)。
+
 ---
 
 ## 11. SuperbWarfare 0.8.9.0 互換 (`SbwCompat`)
@@ -305,7 +310,7 @@ SuperbWarfareの弾薬/乗り物系リソースを「持っているだけ」で
 
 - SRAWランチャーの`GeoModel.getAnimation`NPEクラッシュ(2.2節参照、調査中断中)。
 - `beast_missile_designator`/`active_defense_system`/`coma_grenade`/`flashbang_grenade`/`stun_grenade`/`iced_tea`/各種設計図アイテム/9章の無限系アイテム3種のクラフトレシピ未設定(現状クリエイティブのみ)。
-- 車両まわりで実機未確認の点: バイクの傾く向きと深く傾いたときの車高(`Collision`箱も傾くので浮く可能性)、0.8.9.0での車両の描画・乗車(起動とデータ読込のみ確認済み)。
+- 車両まわりで実機未確認の点: バイクの傾く向きと深く傾いたときの車高(`Collision`箱も傾くので浮く可能性)、0.8.9.0での車両の描画・乗車(起動とデータ読込のみ確認済み)、窓の透過(10.6節)で乗員や車内が窓越しに正しく見えるか(半透明の描画順で乗員が消えないか、0.8.9.0で透けるか)。
 - バイクのモデル・テクスチャ差し替えが編集中(10.5節)。本番ファイルは旧版のまま。
 - アサルトボート後部機銃のモデルが照準に追従しない(10.1節)。
 - フラッシュバンに耳鳴り/聴覚低下の演出なし。
