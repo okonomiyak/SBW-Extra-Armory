@@ -9,7 +9,7 @@
 
 ## 守ること
 - 形式: Blockbench の Bedrock Model (`.geo.json`)。identifier は `geometry.motorcycle` のまま。
-- テクスチャ: 現在 512×512。サイズを変えたら geo.json の `texture_width` / `texture_height` も合わせる。
+- テクスチャ: 現在 128×128(旧版は512×512)。サイズを変えたら geo.json の `texture_width` / `texture_height` も合わせる。
 - ボーン名は SBW が名前で探して動かすので、変えない・消さない:
   `root`, `body`, `steering`, `engine`, `rear`, `lights`, `Wheel`, `wheelL0Turn`(前輪・操舵), `wheelL1`(後輪)
 - 向き: モデル上は前方が −Z、`wheelL*` が +X 側。
