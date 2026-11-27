@@ -63,6 +63,11 @@ repositories {
         url = 'https://api.modrinth.com/maven'
         content { includeGroup 'maven.modrinth' }
     }
+    maven {
+        name = 'JitPack'
+        url = 'https://jitpack.io'
+        content { includeGroup 'com.github.mcmodderanchor' }
+    }
 }
 
 dependencies {
@@ -74,6 +79,11 @@ dependencies {
     def sbwCompileFile = project.findProperty('sbw_file') ?: '8689629'
     modCompileOnly "curse.maven:superb-warfare-1218165:${sbwCompileFile}"
     modRuntimeOnly "curse.maven:superb-warfare-1218165:${project.findProperty('sbw_runtime_file') ?: sbwCompileFile}"
+
+    // Simple Bedrock Model, the model library SBW 0.8.9.1+ bundles (jar-in-jar) and loads at runtime.
+    // AssaultBoatRenderer turns bones through its BoneState API, so it is needed to compile only.
+    // Same coordinates SBW 0.8.9.1 builds against.
+    modCompileOnly 'com.github.mcmodderanchor:simplebedrockmodel:2.5.1-forge-mc1.20.1'
 
     // GrenadeCarbineItem/GrenadeCarbineItemModel compile directly against GeckoLib's renderer API.
     modImplementation 'curse.maven:geckolib-388172:8285794'
