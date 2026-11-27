@@ -1,0 +1,93 @@
+GIMP Palette
+Name: motorcycle extended
+Columns: 10
+#
+ 88  94  61	olive main (original)
+ 63  68  43	olive dark (original)
+ 58  62  40	olive edge (original)
+ 21  21  23	black (original)
+ 25  25  26	tire black (original)
+ 30  30  32	seat black (original)
+ 38  40  42	dark gray (original)
+110 112 114	engine gray (original)
+120 120 120	plate frame gray (original)
+117 121 127	chrome dark (original)
+176 178 180	silver (original)
+241 243 247	chrome light (original)
+ 80  75  69	brown gray (original)
+ 71  67  61	brown gray dark (original)
+189  23  23	red (original)
+238 140  20	orange (original)
+ 20 110  60	plate green (original)
+236 238 232	plate white (original)
+209 215 218	headlight lens (original)
+250 252 255	headlight white (original)
+ 17  18  13	olive 1
+ 35  36  25	olive 2
+ 58  61  41	olive 3
+119 128  86	olive 5
+151 161 119	olive 6
+180 187 160	olive 7
+207 212 196	olive 8
+231 233 226	olive 9
+245 246 243	olive 10
+ 17  18  12	olive (cool) 1
+ 35  37  24	olive (cool) 2
+ 86  93  60	olive (cool) 4
+118 128  86	olive (cool) 5
+149 161 120	olive (cool) 6
+178 187 160	olive (cool) 7
+206 211 197	olive (cool) 8
+230 233 226	olive (cool) 9
+245 246 244	olive (cool) 10
+ 15  15  16	neutral 1
+ 49  51  53	neutral 3
+ 73  76  80	neutral 4
+103 107 112	neutral 5
+136 139 145	neutral 6
+171 173 176	neutral 7
+202 204 206	neutral 8
+229 229 230	neutral 9
+245 245 245	neutral 10
+ 30  31  31	chrome 2
+ 50  51  52	chrome 3
+ 75  77  78	chrome 4
+105 107 109	chrome 5
+138 140 143	chrome 6
+203 204 205	chrome 8
+ 16  15  14	brown gray 1
+ 33  31  29	brown gray 2
+ 55  51  47	brown gray 3
+114 108 100	brown gray 5
+147 142 133	brown gray 6
+178 175 169	brown gray 7
+207 205 201	brown gray 8
+231 230 228	brown gray 9
+245 245 244	brown gray 10
+ 25   6   7	red 1
+ 50  11  14	red 2
+ 86  16  20	red 3
+132  21  24	red 4
+223  63  58	red 6
+227 126 120	red 7
+235 179 173	red 8
+244 219 215	red 9
+250 241 239	red 10
+ 25  14   6	orange 1
+ 51  29  10	orange 2
+ 87  49  15	orange 3
+135  77  18	orange 4
+195 112  19	orange 5
+237 185 110	orange 7
+240 213 168	orange 8
+246 234 213	orange 9
+251 247 238	orange 10
+  6  25  13	green 1
+ 11  50  27	green 2
+ 17  85  46	green 3
+ 40 174 105	green 5
+ 75 206 142	green 6
+131 215 177	green 7
+180 228 208	green 8
+219 240 232	green 9
+241 249 246	green 10

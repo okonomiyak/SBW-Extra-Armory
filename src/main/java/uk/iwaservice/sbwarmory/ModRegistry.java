@@ -285,16 +285,16 @@ public final class ModRegistry {
                     .build("mushroom_cloud"));
 
     public static final RegistryObject<EntityType<uk.iwaservice.sbwarmory.entity.CivilianCarEntity>> PROBOX_WAGON =
-            civilianCar("probox_wagon", 2.4f, 2.1f);
+            civilianCar("probox_wagon", 3.0f, 2.625f);
 
     public static final RegistryObject<EntityType<uk.iwaservice.sbwarmory.entity.CivilianCarEntity>> HIACE_VAN =
-            civilianCar("hiace_van", 2.4f, 2.9f);
+            civilianCar("hiace_van", 3.0f, 3.625f);
 
     public static final RegistryObject<EntityType<uk.iwaservice.sbwarmory.entity.CivilianCarEntity>> LUXURY_SEDAN =
-            civilianCar("luxury_sedan", 2.7f, 2.6f);
+            civilianCar("luxury_sedan", 3.375f, 3.25f);
 
     public static final RegistryObject<EntityType<uk.iwaservice.sbwarmory.entity.CivilianCarEntity>> PROBOX_MG =
-            civilianCar("probox_mg", 2.4f, 2.1f);
+            civilianCar("probox_mg", 3.0f, 2.625f);
 
     public static final RegistryObject<EntityType<uk.iwaservice.sbwarmory.entity.HovercraftEntity>> HOVERCRAFT =
             vehicle("hovercraft", uk.iwaservice.sbwarmory.entity.HovercraftEntity::new, 3.0f, 2.0f);

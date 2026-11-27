@@ -5,90 +5,90 @@
     {
       "Part": "Collision",
       "Size": [
-        1.325,
-        0.6875,
-        3.672
+        1.65625,
+        0.859375,
+        4.59
       ],
       "Position": [
-        0,
-        0.6875,
-        -0.197
+        0.0,
+        0.859375,
+        -0.24625
       ]
     },
     {
       "Size": [
-        0.17,
-        0.484,
-        0.484
+        0.2125,
+        0.605,
+        0.605
       ],
       "Position": [
-        1.11,
-        0.484,
-        2.124
+        1.3875,
+        0.605,
+        2.655
       ],
       "Part": "WheelLeft"
     },
     {
       "Size": [
-        0.17,
-        0.484,
-        0.484
+        0.2125,
+        0.605,
+        0.605
       ],
       "Position": [
-        -1.11,
-        0.484,
-        2.124
+        -1.3875,
+        0.605,
+        2.655
       ],
       "Part": "WheelRight"
     },
     {
       "Size": [
-        0.17,
-        0.484,
-        0.484
+        0.2125,
+        0.605,
+        0.605
       ],
       "Position": [
-        1.11,
-        0.484,
-        -2.124
+        1.3875,
+        0.605,
+        -2.655
       ],
       "Part": "WheelLeft"
     },
     {
       "Size": [
-        0.17,
-        0.484,
-        0.484
+        0.2125,
+        0.605,
+        0.605
       ],
       "Position": [
-        -1.11,
-        0.484,
-        -2.124
+        -1.3875,
+        0.605,
+        -2.655
       ],
       "Part": "WheelRight"
     },
     {
       "Size": [
-        1.325,
-        0.5625,
-        3.672
+        1.65625,
+        0.703125,
+        4.59
       ],
       "Position": [
-        0,
-        0.8125,
-        -0.197
+        0.0,
+        1.015625,
+        -0.24625
       ]
     },
     {
       "Size": [
-        1.18,
-        0.575,
-        1.86
+        1.475,
+        0.71875,
+        2.325
       ],
       "Position": [
-        0,
-        1.95,
-        -0.79
+        0.0,
+        2.4375,
+        -0.9875
       ]
     }
   ],
@@ -97,9 +97,9 @@
       "IsEnclosed": true,
       "Transform": "Vehicle",
       "Position": [
-        -0.62,
-        0.01,
-        0.0
+        -0.775,
+        0.4625,
+        -0.45
       ],
       "RotateWithVehicle": true,
       "MinPitch": -60,
@@ -109,8 +109,8 @@
       "DismountInfo": {
         "Transform": "Vehicle",
         "Position": [
-          -1.9,
-          0.11,
+          -2.375,
+          0.1375,
           0.0
         ]
       }
@@ -119,9 +119,9 @@
       "IsEnclosed": true,
       "Transform": "Vehicle",
       "Position": [
-        0.62,
-        0.01,
-        0.0
+        0.775,
+        0.4625,
+        -0.45
       ],
       "RotateWithVehicle": true,
       "MinPitch": -60,
@@ -131,8 +131,8 @@
       "DismountInfo": {
         "Transform": "Vehicle",
         "Position": [
-          1.9,
-          0.11,
+          2.375,
+          0.1375,
           0.0
         ]
       }
@@ -141,9 +141,9 @@
       "IsEnclosed": true,
       "Transform": "Vehicle",
       "Position": [
-        -0.54,
-        0.03,
-        -1.21
+        -0.675,
+        0.4875,
+        -1.5125
       ],
       "RotateWithVehicle": true,
       "MinPitch": -60,
@@ -153,9 +153,9 @@
       "DismountInfo": {
         "Transform": "Vehicle",
         "Position": [
-          -1.9,
-          0.11,
-          -1.21
+          -2.375,
+          0.1375,
+          -1.5125
         ]
       }
     },
@@ -163,9 +163,9 @@
       "IsEnclosed": true,
       "Transform": "Vehicle",
       "Position": [
-        0.54,
-        0.03,
-        -1.21
+        0.675,
+        0.4875,
+        -1.5125
       ],
       "RotateWithVehicle": true,
       "MinPitch": -60,
@@ -175,9 +175,9 @@
       "DismountInfo": {
         "Transform": "Vehicle",
         "Position": [
-          1.9,
-          0.11,
-          -1.21
+          2.375,
+          0.1375,
+          -1.5125
         ]
       }
     }
@@ -197,7 +197,7 @@
   },
   "UpStep": 1.1,
   "Mass": 3.0,
-  "RotateOffsetHeight": 2.0,
+  "RotateOffsetHeight": 2.5,
   "DamageModifiers": [
     "All - 2",
     "minecraft:lava + 2",
@@ -235,9 +235,9 @@
     "ExplosionRadius": 5
   },
   "ThirdPersonCameraPos": [
-    0,
-    0.5,
-    3
+    0.0,
+    0.625,
+    3.75
   ],
   "VehicleIcon": "sbwarmory:textures/vehicle_icon/luxury_sedan_icon.png",
   "ContainerIcon": "superbwarfare:textures/gui/vehicle/type/civilian.png",
@@ -261,24 +261,24 @@
   "HornSound": "superbwarfare:car_horn",
   "TerrainCompat": [
     [
-      1.11,
-      0,
-      2.124
+      1.3875,
+      0.0,
+      2.655
     ],
     [
-      -1.11,
-      0,
-      2.124
+      -1.3875,
+      0.0,
+      2.655
     ],
     [
-      1.11,
-      0,
-      -2.124
+      1.3875,
+      0.0,
+      -2.655
     ],
     [
-      -1.11,
-      0,
-      -2.124
+      -1.3875,
+      0.0,
+      -2.655
     ]
   ],
   "TerrainCompatRotateRate": 1.5,

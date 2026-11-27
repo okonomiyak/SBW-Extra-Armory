@@ -3,8 +3,8 @@
   "MaxEnergy": 5000000,
   "TurretPos": [
     0.0,
-    2.475,
-    -1.375
+    3.09375,
+    -1.71875
   ],
   "TurretTurnSpeed": [
     14,
@@ -15,8 +15,8 @@
     60
   ],
   "BarrelPos": [
-    0,
-    0.11,
+    0.0,
+    0.1375,
     0.0
   ],
   "TurretControllerIndex": 2,
@@ -24,90 +24,90 @@
     {
       "Part": "Collision",
       "Size": [
-        1.162,
-        0.6805,
-        2.918
+        1.4525,
+        0.850625,
+        3.6475
       ],
       "Position": [
-        0,
-        0.6805,
-        0.031
+        0.0,
+        0.850625,
+        0.03875
       ]
     },
     {
       "Size": [
-        0.2,
-        0.42,
-        0.42
+        0.25,
+        0.525,
+        0.525
       ],
       "Position": [
-        1.004,
-        0.415,
-        1.753
+        1.255,
+        0.51875,
+        2.19125
       ],
       "Part": "WheelLeft"
     },
     {
       "Size": [
-        0.2,
-        0.42,
-        0.42
+        0.25,
+        0.525,
+        0.525
       ],
       "Position": [
-        -1.004,
-        0.415,
-        1.753
+        -1.255,
+        0.51875,
+        2.19125
       ],
       "Part": "WheelRight"
     },
     {
       "Size": [
-        0.2,
-        0.42,
-        0.42
+        0.25,
+        0.525,
+        0.525
       ],
       "Position": [
-        1.004,
-        0.415,
-        -1.753
+        1.255,
+        0.51875,
+        -2.19125
       ],
       "Part": "WheelLeft"
     },
     {
       "Size": [
-        0.2,
-        0.42,
-        0.42
+        0.25,
+        0.525,
+        0.525
       ],
       "Position": [
-        -1.004,
-        0.415,
-        -1.753
+        -1.255,
+        0.51875,
+        -2.19125
       ],
       "Part": "WheelRight"
     },
     {
       "Size": [
-        1.162,
-        0.536,
-        2.918
+        1.4525,
+        0.67,
+        3.6475
       ],
       "Position": [
-        0,
-        0.825,
-        0.031
+        0.0,
+        1.03125,
+        0.03875
       ]
     },
     {
       "Size": [
-        1.086,
-        0.337,
-        1.585
+        1.3575,
+        0.42125,
+        1.98125
       ],
       "Position": [
-        0,
-        1.698,
-        -0.966
+        0.0,
+        2.1225,
+        -1.2075
       ]
     }
   ],
@@ -116,9 +116,9 @@
       "IsEnclosed": true,
       "Transform": "Vehicle",
       "Position": [
-        -0.55,
-        -0.015,
-        0.32
+        -0.6875,
+        0.48125,
+        0.15
       ],
       "RotateWithVehicle": true,
       "MinPitch": -60,
@@ -128,9 +128,9 @@
       "DismountInfo": {
         "Transform": "Vehicle",
         "Position": [
-          -1.6,
-          0.11,
-          0.32
+          -2.0,
+          0.1375,
+          0.4
         ]
       }
     },
@@ -138,9 +138,9 @@
       "IsEnclosed": true,
       "Transform": "Vehicle",
       "Position": [
-        0.55,
-        -0.015,
-        0.32
+        0.6875,
+        0.48125,
+        0.15
       ],
       "RotateWithVehicle": true,
       "MinPitch": -60,
@@ -150,18 +150,18 @@
       "DismountInfo": {
         "Transform": "Vehicle",
         "Position": [
-          1.6,
-          0.11,
-          0.32
+          2.0,
+          0.1375,
+          0.4
         ]
       }
     },
     {
       "Transform": "Turret",
       "Position": [
-        0,
-        -1.719,
-        -0.75
+        0.0,
+        -2.14875,
+        -0.9375
       ],
       "MinPitch": -20,
       "MaxPitch": 60,
@@ -170,9 +170,9 @@
         "Transform": "Barrel",
         "UseFixedCameraPos": true,
         "Position": [
-          0,
-          0.25,
-          -0.9
+          0.0,
+          0.3125,
+          -1.125
         ],
         "Direction": "Barrel"
       },
@@ -187,9 +187,9 @@
       "DismountInfo": {
         "Transform": "Vehicle",
         "Position": [
-          0,
-          0.75,
-          -3.4
+          0.0,
+          0.9375,
+          -4.25
         ]
       }
     },
@@ -197,9 +197,9 @@
       "IsEnclosed": true,
       "Transform": "Vehicle",
       "Position": [
-        -0.55,
-        -0.025,
-        -0.636
+        -0.6875,
+        0.46875,
+        -0.795
       ],
       "RotateWithVehicle": true,
       "MinPitch": -60,
@@ -209,9 +209,9 @@
       "DismountInfo": {
         "Transform": "Vehicle",
         "Position": [
-          -1.6,
-          0.11,
-          -0.636
+          -2.0,
+          0.1375,
+          -0.795
         ]
       }
     },
@@ -219,9 +219,9 @@
       "IsEnclosed": true,
       "Transform": "Vehicle",
       "Position": [
-        0.55,
-        -0.025,
-        -0.636
+        0.6875,
+        0.46875,
+        -0.795
       ],
       "RotateWithVehicle": true,
       "MinPitch": -60,
@@ -231,9 +231,9 @@
       "DismountInfo": {
         "Transform": "Vehicle",
         "Position": [
-          1.6,
-          0.11,
-          -0.636
+          2.0,
+          0.1375,
+          -0.795
         ]
       }
     }
@@ -260,9 +260,9 @@
         "Transform": "Barrel",
         "Positions": [
           [
-            0,
-            0.017,
-            1.169
+            0.0,
+            0.02125,
+            1.46125
           ]
         ],
         "Directions": [
@@ -297,7 +297,7 @@
   },
   "UpStep": 1.1,
   "Mass": 2.5,
-  "RotateOffsetHeight": 2.2,
+  "RotateOffsetHeight": 2.75,
   "DamageModifiers": [
     "All - 2",
     "minecraft:lava + 2",
@@ -335,9 +335,9 @@
     "ExplosionRadius": 5
   },
   "ThirdPersonCameraPos": [
-    0,
-    0.6,
-    3.2
+    0.0,
+    0.75,
+    4.0
   ],
   "VehicleIcon": "sbwarmory:textures/vehicle_icon/probox_mg_icon.png",
   "ContainerIcon": "superbwarfare:textures/gui/vehicle/type/civilian.png",
@@ -361,24 +361,24 @@
   "HornSound": "superbwarfare:car_horn",
   "TerrainCompat": [
     [
-      1,
-      0,
-      1.753
+      1.25,
+      0.0,
+      2.19125
     ],
     [
-      -1,
-      0,
-      1.753
+      -1.25,
+      0.0,
+      2.19125
     ],
     [
-      1,
-      0,
-      -1.753
+      1.25,
+      0.0,
+      -2.19125
     ],
     [
-      -1,
-      0,
-      -1.753
+      -1.25,
+      0.0,
+      -2.19125
     ]
   ],
   "TerrainCompatRotateRate": 1.5,

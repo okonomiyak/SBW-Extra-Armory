@@ -62,7 +62,7 @@
       "Transform": "Vehicle",
       "Position": [
         -0.653,
-        1.519,
+        0.87,
         2.372
       ],
       "RotateWithVehicle": true,
@@ -84,7 +84,7 @@
       "Transform": "Vehicle",
       "Position": [
         0.653,
-        1.519,
+        0.87,
         2.372
       ],
       "RotateWithVehicle": true,
@@ -149,8 +149,8 @@
       "IsEnclosed": true,
       "Transform": "Vehicle",
       "Position": [
-        -1.134,
-        1.719,
+        -0.86,
+        0.87,
         0.963
       ],
       "RotateWithVehicle": true,
@@ -171,8 +171,8 @@
       "IsEnclosed": true,
       "Transform": "Vehicle",
       "Position": [
-        1.134,
-        1.719,
+        0.86,
+        0.87,
         0.963
       ],
       "RotateWithVehicle": true,
@@ -261,6 +261,11 @@
         ],
         "Directions": [
           "Passenger"
+        ],
+        "DefaultBarrelDirection": [
+          0,
+          0,
+          -1
         ]
       },
       "Crosshair": "@VehicleCommonGun",

@@ -114,7 +114,14 @@ HANDOVER.md(開発経緯・詰まった箇所のメモ)、README.md(利用者向
 - GeckoLibの`GeoArmorRenderer`+`armorHead`ボーン(`pivot=[0,24,0]`必須、プレイヤーモデルの頭座標系に合わせる)で専用3Dモデルを描画。5%大きめにスケール(`withScale(1.05F)`)してバニラの頭とのZファイティングを回避。
 - 装備中(頭スロットに入っている間)、`inventoryTick`でバニラ`NIGHT_VISION`効果を継続付与(220tickごとに再付与)。
 - **Nキー**(`ModKeyMappings.TOGGLE_NIGHT_VISION`)でON/OFFトグル可能。NBTの`Active`フラグ(既定true)で管理、`ToggleNightVisionPacket`でサーバーに反映。
-- 緑エフェクトは**一人称視点かつ効果ON**の時だけ有効。当初はバニラPostChain(`GameRenderer#loadEffect`)を使う専用シェーダーJSONだったが、Rubidium/Oculus系の軽量化Modを併用する実機環境でPostChainがシェーダーパック未選択でも黙って無効化される事例が確認されたため、**HUDレイヤーへの乗算ブレンド描画方式に切り替え済み**(`ClientForgeEvents#drawGreenMultiplyOverlay`)。画面全体に不透明な緑(`0,255,0`)を`DST_COLOR × ZERO`ブレンドで描画することで、既存シーンの緑チャンネルの明るさをそのまま残しつつ赤/青を0にする(平坦な半透明トーンではなく、実際の明暗差が残るFLIR/サーマルっぽい見た目)。スコープのビネットと同じ`RenderGuiEvent.Post`経路を使うため、Sodium系Modの影響を受けない。旧`shaders/post/night_vision.json`は削除済み。
+- 緑エフェクトは**一人称視点かつ効果ON**の時だけ有効。当初はバニラPostChain(`GameRenderer#loadEffect`)を使う専用シェーダーJSONだったが、Rubidium/Oculus系の軽量化Modを併用する実機環境でPostChainがシェーダーパック未選択でも黙って無効化される事例が確認されたため、**HUDレイヤーへのブレンド描画方式に切り替え済み**(`ClientForgeEvents#drawNightVisionOverlay`)。Sodium系Modの影響を受けない。`ClientModEvents#onRegisterGuiOverlays`で`RegisterGuiOverlaysEvent#registerBelowAll`(ID `night_vision`)として登録し、HUDの一番下に描くので、ホットバー・体力・照準などはゴーグルの色・ノイズ・視野の影響を受けずに上に表示される(以前は`RenderGuiEvent.Post`でHUDごと緑になっていた)。バニラの画面端の暗がり(vignette)と同じく、描く間は深度テストと深度書き込みを切る。HUDごと描かれないので、F1でHUDを消すと暗視の見た目も消える。旧`shaders/post/night_vision.json`は削除済み。
+- 見た目はEscape from Tarkov風の暗視装置(明るい蛍光グリーン、ざらつき、楕円の視野)。画面全体に次の5層を順に描く(定数は`NVG_*`):
+  1. 色: `(0.22, 1.0, 0.12)`を`DST_COLOR × ZERO`で乗算(明暗はほぼ緑チャンネルで残し、赤青をわずかに残して黄緑寄りに)。
+  2. 増幅: 白を`DST_COLOR × ONE`(=dst×2)で描いて明るさを2倍。
+  3. 黒の持ち上げ: `(0.01, 0.045, 0)`を加算(`ONE × ONE`)、真っ黒を避ける。
+  4. ざらつき: `textures/overlay/nvg_noise.png`(256×256、128中心の灰色ノイズ、標準偏差17)を`DST_COLOR × SRC_COLOR`(=dst×src×2)で、画面1ピクセルに1テクセルのタイル貼り。毎フレーム位置と左右反転をランダムに変える。
+  5. 視野: `textures/overlay/nvg_vignette.png`(512×256、楕円の外が黒、縁に向かってなだらかに暗くなるアルファ)を画面全体に引き伸ばして通常のアルファ合成。線形補間を有効にしてある。
+- 2枚のテクスチャは手描きではなくスクリプトで生成したもの。見た目の調整は`NVG_*`定数と、この2枚を作り直して行う。
 - `night_vision_goggles_red`は`NightVisionGogglesItem`のサブクラスで、`createRenderer()`だけオーバーライドしてモデル/テクスチャを差し替えている(ロジックは全部継承)。`createRenderer()`には`@OnlyIn(Dist.CLIENT)`が必須(付け忘れるとアイテム登録時に専用サーバーがクラッシュする、詳細は14章)。
 
 ### 4.2 ヘルメット (`helmet_blue` / `helmet_red`)
@@ -238,7 +245,8 @@ SuperbWarfareの弾薬/乗り物系リソースを「持っているだけ」で
 - 描画: 0.8.9.1+は車が`BasicVehicleRenderer`、ホバークラフト/アサルトボートは`SpeedBoatRenderer`(`move_propeller`/`move_rudder`ボーンを回す)。0.8.9.0は全車`LegacyVehicleRenderer`。
 - 機銃の発砲炎は自作の`animations/bedrock/vehicle/machine_gun_flare.animation.json`(`flare`ボーンのみ)。SBW本体のHMG/スピードボート用アニメを流用すると、存在しないボーン指定(`gun`/`action`/`m2hb`等)が別のボーンに当たり、撃つとタイヤが巨大化するバグがあった。
 - アイコン: `textures/vehicle_icon/<id>_icon.png`(256x64、白線画)。コンテナ用は`assets/superbwarfare/textures/vehicle_icon/container/<id>.png`(SBWが`superbwarfare`名前空間からしか読まないため)。
-- アサルトボートの後部機銃は射手の視線方向に撃つが、モデルは後ろ向き固定(`aftYaw`/`aftPitch`を回す専用レンダラ未実装)。
+- アサルトボートの後部機銃: 専用レンダラ`client/AssaultBoatRenderer`(0.8.9.1+のみ、`BasicVehicleRenderer`継承)で、毎フレーム席2(後部機銃手)の視線から`move_aftYaw`/`move_aftPitch`を直接回す。**骨名は`move_`で始める必要がある**: SBW 0.8.9.1+のモデル読み込み(`VehicleModelReloadListener`)は名前が決まったパターン(`^move_.*`、`^w_.*`、`turret`、`barrel`、`^flare.*`、`passengerWeaponStationYaw`/`Pitch`など)に一致する骨とアニメが参照する骨だけを動かせる骨として残し、それ以外は静的メッシュに畳み込む(`getBone`がnullを返す)。最初は`aftYaw`/`aftPitch`という名前だったため、レンダラも`BoundBones`も実機で何も動かなかった。符号はSBWの砲塔と同じ(`turretYRot`は「船のヨー − 狙う向きのヨー」で、右を狙うと減る。これを`rotationY`。ピッチは`-xRot`で`rotationX`)。SBWの砲塔は1台に1つで前部RWSが使っているため、2つ目の機銃はこの方式にした(SBWの乗員用ウェポンステーションは砲塔に載る前提で、船尾には使えない)。銃の部品は前向きに作り、親の固定ボーン`aftFlip`(Y軸180°)で普段は後ろ向き。ピッチは席2の`MinPitch`/`MaxPitch`(-20/50)で制限。射手がいないときは後ろ向きで静止。先に試したデータ駆動の追従(武器データの`BoundBonesYaw`/`BoundBonesPitch`)は実機で動かなかったため削除した(上記の骨名の畳み込みが原因だった可能性が高い)。`SpeedBoatRenderer`はKotlinのfinalクラスで継承できないので、プロペラ・舵の回転とズーム中のRWS非表示はこのクラスで同じ処理を書き直している。0.8.9.0のGeckoLib描画(`LegacyVehicleRenderer`)では後部機銃は動かない。部品の型`BoneState`はSBWがjar-in-jarで同梱するSimple Bedrock Model(2.5.1)のものなので、`build.gradle`にJitPackの`com.github.mcmodderanchor:simplebedrockmodel:2.5.1-forge-mc1.20.1`を`modCompileOnly`で追加している(SBW自身と同じ座標。実行時はSBW同梱のものが使われる)。
+- アサルトボートの座席(機銃手以外の4席): 操縦室は床1.75・横窓2.27〜2.75・フロントガラス2.13〜2.89・天井下面2.82と高さが約1ブロックしかなく、以前の高さ1.52〜1.72では目線(座席+1.62)が天井より上、頭が屋根を突き抜けていた。防具を着けた頭(座席+1.95)が天井に収まる上限の0.87にそろえた(目線2.49=窓のほぼ中央)。その分、腰は座面より少し沈み、前に伸ばした脚は床下(船体内)に隠れる。後席2つは腕が側壁から出ていたので、座席とベンチ(`interior`の座面)を横位置±1.134→±0.86へ内側に寄せた。前部RWSの射手(席1)は`CameraPos`が銃身固定なので座席高さの影響なし。後部機銃手(席2)は立ち姿勢で甲板上のまま(変更なし)。
 
 ### 10.2 データ作成上の注意(実際にハマった点)
 - **`Collision`パーツのOBBは底面をタイヤ接地面(y=0)まで伸ばすこと。** SBW 0.8.9.1+の`VehicleEntity.move()`は車体をこの箱の底面で地面に載せるため、底を浮かせるとその分だけ車体ごと沈む(当初0.22〜0.29ブロック沈んでいた)。
@@ -248,12 +256,43 @@ SuperbWarfareの弾薬/乗り物系リソースを「持っているだけ」で
 - データJSON上の座標: 前方+Z、+Xが車両の左。モデルファイル上は前方−Z、`wheelL*`がx正。
 
 ### 10.3 ホバークラフト・バイクの独自処理
-- **ホバークラフト**: SBWの`Ship`エンジンは船体が液体中のときしか旋回・推進しない(接地中は速度を毎tick0.75倍にするだけ)。`HovercraftEntity#travel`で、液体外かつ接地中ならSBWの`shipEngine`と同じ式(旋回: yaw −= 20×水平速度×deltaRot×sign(power)、推進: view×0.11×targetSpeed×power×min(|power|,1))を自前で掛ける。陸上推進は`LAND_THRUST_SCALE`=0.9倍(陸上最高速は水上の約半分)。`UpStep`1.1で浜辺の段差を越える。最高速は`MaxForwardSpeedRate`1.125/`MaxBackwardSpeedRate`0.75(当初値の0.75倍。推進力はこの値に比例するので水上・陸上とも効く)。
+- **ホバークラフト**: SBWの`Ship`エンジンは船体が液体中のときしか旋回・推進しない(接地中は速度を毎tick0.75倍にするだけ)。`HovercraftEntity#travel`で、液体外かつ接地中ならSBWの`shipEngine`と同じ式(旋回: yaw −= 20×水平速度×deltaRot×sign(power)、推進: view×0.11×targetSpeed×power×min(|power|,1))を自前で掛ける。陸上推進は`LAND_THRUST_SCALE`=0.9倍(陸上最高速は水上の約半分)。`UpStep`1.1で浜辺の段差を越える。座席(機銃手以外)は高さ0.88: 操縦室は床1.21・横窓2.19〜2.69・天井下面2.82と低く、以前の1.01〜1.21では目線(座席+1.62)が窓の上端より上になり、防具を着けた頭(座席+1.95)が天井を突き抜けていた。0.88は座面上端1.58に腰が来る高さで、目線2.50(窓の中ほど)、頭の上端2.83(天井下面とほぼ同じ)。最高速は`MaxForwardSpeedRate`1.125/`MaxBackwardSpeedRate`0.75(当初値の0.75倍。推進力はこの値に比例するので水上・陸上とも効く)。
 - **バイク**: SBWの`Wheel`エンジンは四輪前提で傾かないため、`MotorcycleEntity#baseTick`で旋回に応じてロール角を付ける。傾き = atan(水平速度×ヨー角速度/重力0.08)、最大40°、毎tick 3割ずつ追従。SBWは`Axis.ZP`でロール(正=右へ傾く)、右旋回でyRotが増えるので符号は正。SBWの地形追従も毎tickロールを書き換えるため、SBWの処理の前に前回の傾きを外し、後で足し直す(`prevRoll`も補正して描画補間を連続に保つ)。ハンドル/フォークは静止(前輪のみ操舵)。
 
 ### 10.4 クリエイティブタブ
 - 「SBW Extra Armory」(`itemGroup.sbwarmory`): 車両以外。以前はタイトルキーが`itemGroup.smokelauncher`で未翻訳だったのを修正。
 - 「SBW Extra Armory: 車両」(`itemGroup.sbwarmory.vehicles`): 車両7種のコンテナ+`vehicle_ammo_box`+`vehicle_battery_pack`。アイコンはプロボックスのコンテナ。
+
+### 10.5 バイクのモデル・テクスチャ差し替え
+- バイク(`motorcycle`)の見た目を作り直し、本番の`assets/sbwarmory/models/bedrock/vehicle/motorcycle.geo.json`と`textures/bedrock/vehicle/motorcycle.png`を新版に差し替えた。テクスチャは512×512→128×128(geo.jsonの`texture_width`/`texture_height`も128)。車体寸法・ボーン名・車輪/ハンドルのpivotは旧版と同じなので、データJSON(座席・`OBB`)は変更なし。作業用コピーは`wip/motorcycle/`(jarに含まれない)。
+- `wip/motorcycle/`の中身: 新版モデル/テクスチャの編集元(Zファイティング修正前のまま)、`NOTES.md`(戻し先と守るべき点)、使用色パレット(`palette.md`、`motorcycle.gpl`/`.hex`の20色、`motorcycle_extended.*`の89色)。
+- 差し替え時の制約: ボーン名`root`/`body`/`steering`/`engine`/`rear`/`lights`/`Wheel`/`wheelL0Turn`/`wheelL1`は変えない、identifierは`geometry.motorcycle`のまま、テクスチャサイズを変えたらgeo.jsonの`texture_width`/`texture_height`も合わせる。車体寸法や座る位置を大きく変えたら`data/sbwarmory/sbw/vehicles/motorcycle.json`の`OBB`/`Seats`も調整。
+- 円形パーツ(タイヤ等)は同じ直方体をpivot=円の中心で回転複製して作る(現行タイヤは12個×30°、開始角15°)。
+- 差し替えたら`python3 tools/fix_zfighting.py fix`で重なり点滅を消すこと(10.8節)。新版は11組の重なりがあり、本番ファイルにだけ適用済み(`wip/`の編集元は未適用なので、次に編集して戻すときも最後に掛ける)。パレット(`palette.md`等)は旧512×512テクスチャから作ったもの。
+
+### 10.6 窓の透過
+- 窓のある6車種(`probox_wagon`/`probox_mg`/`hiace_van`/`luxury_sedan`/`hovercraft`/`assault_boat`)は、geo.jsonの`glass`ボーンが参照するテクスチャ領域のアルファを元の約45%(243〜251→107〜114)に下げ、窓越しに`interior`が見えるようにした。RGBはそのまま(色付きガラス)。`glass`の領域は他のボーンと共有していないので、窓以外には影響しない。
+- 0.8.9.1+のSBWは車両本体を`RenderType.entityTranslucent`で描くので、テクスチャのアルファがそのまま半透明になる(SBW本体の`sodayo_pick_up`等も同じ方式)。0.8.9.0の旧描画(`LegacyVehicleRenderer`→SBWの`VehicleRenderer`)が半透明に対応しているかは未確認。
+- 透明度を変えたいときは、`glass`ボーンのUV領域のアルファだけを書き換える(新しい窓を足すときも`glass`ボーンに入れる)。
+
+### 10.7 乗用車の1.25倍拡大と座席調整
+- 乗っているプレイヤー(特に防具・暗視ゴーグル着用時)の頭や腕が車体から出ていたため、`probox_wagon`/`probox_mg`/`hiace_van`/`luxury_sedan`を一律1.25倍にした。ボート・ホバークラフト・バイクは対象外。
+- 拡大は車両原点(地面)基準。geo.jsonは`origin`/`size`/`pivot`/`inflate`/`visible_bounds_*`、データJSONは座標系の値(`OBB`の`Size`/`Position`、`Seats`の`Position`・`DismountInfo`・`CameraPos`、`ShootPos`、`TurretPos`、`BarrelPos`、`ThirdPersonCameraPos`、`TerrainCompat`、`RotateOffsetHeight`)をすべて同率で掛けた。UV・テクスチャはそのまま(ピクセルが大きく見えるだけ)。性能値(速度・`UpStep`・`Mass`等)は変更なし。`ModRegistry`のエンティティ当たり判定(`civilianCar`の幅・高さ)も1.25倍。
+- 確認方法: 防具+暗視ゴーグル着用の座った状態(頭の上+1.3px、横+1.2px、ゴーグルが顔の前へ7.7px)を各座席に置いて描画し、車体から出ないことを見た。乗員は座席`Position`=足元、SBW既定の座り姿勢(脚を前に伸ばす)で描かれる。
+- 拡大すると車体だけ高くなり、座席(高さ≈0)の目線(座席+1.62)がフロントガラス下端より下になって前が見えなくなったため、座席を上げた。目安は「運転席の目線がフロントガラスの下から約3割」。上げると傾いたフロントガラスからゴーグルが出るので、前席は後ろへずらしている。現在の座席(拡大後の値):
+  - `probox_wagon`/`probox_mg`: 前席(±0.6875, 0.48125, 0.1625)/(0.15)、後席(±0.61875, 0.46875, −0.6875)/(−0.795)。機銃手席は変更なし。目線はフロントガラスの33%。
+  - `hiace_van`: 運転席列(±0.725, 0.92, 1.7125)、2列目(±0.75/0, 0.68, 0.2875)、3列目(±0.775, 0.68, −1.25)、4列目(±0.68, 0.68, −3.15)。後部は車体側面・後輪タイヤハウスから腕と足が出ないよう内側・後ろへ寄せてある。目線38%。
+  - `luxury_sedan`: 前席(±0.775, 0.4625, −0.45)、後席(±0.675, 0.4875, −1.5125)。目線28%(フロントガラスの傾斜がきつく、これ以上上げるとヘルメットが屋根の前縁に当たる)。
+- 座席モデル(`interior`ボーンの座面・背もたれ・ヘッドレスト)も乗員の座席と一緒に動かした。前後方向は乗員と同じだけ(ずれていると、一人称では自分の体が描かれないため足元に座面が塊のように見える)。高さ方向は「ヘッドレスト上端が屋根の下面より0.5px下」までに抑えた(乗員と同じだけ上げると背もたれ・ヘッドレストが屋根を突き抜ける)。乗員の頭は屋根下面のすぐ下(`probox`で約0.01、`luxury_sedan`で約0.02の余裕)なので、座席はこれ以上上げられない。ダッシュボード・ハンドルは動かしていない。
+- 各タイヤハウスの車内側に内張り(`interior`ボーン、1px厚の内壁・天井・前後の壁)を追加した。タイヤハウスの車内側に壁がなく、足元の隙間から車輪が見えていたため。前輪の内壁は35°操舵してもタイヤが当たらない位置まで内側に離してある(SBWの実際の最大舵角は未確認)。下端は車体の下端に合わせ、外から地面際に板が見えないようにした。テクスチャはダッシュボードと同じ濃いグレー(`luxury_sedan`は黒)の2×2px領域。
+- 別の車を拡大するときも、上の項目を同じ倍率で掛けること(どれか1つでも漏れると座席・当たり判定・カメラがモデルとずれる)。
+
+### 10.8 モデルの重なり点滅(Zファイティング)対策
+- 同じ平面上(0.02px未満のずれも含む)で同じ向きの面が重なると、描画のたびにどちらが手前か入れ替わって点滅する。全車両モデル(7種)でこれを解消した。
+- 判定は各キューブの回転と、動かないボーン自体の回転(アサルトボートの船首`bow`の−14°など)を適用したモデル空間で行う(船首と船体の重なり14組はこれで初めて検出できた)。回転の違う部品どうし(円形タイヤの回転複製した棒・リム、ホバークラフトのスカート・ダクト・プロペラ等)の重なりもここで拾う。当初は回転なし・同じ回転の部品しか見ていなかったため、タイヤ側面(車輪1つあたり72〜90組)やホバークラフト(123組)を見逃していた。
+- 直し方: 重なり合う面のまとまりごとに段数を割り振る(一番大きい面が0段、各面は重なる相手が使っていない最小の段)。L段の面は外側へ、まとまりの一番手前の面+0.04px×Lまでずらす。タイヤの棒は6本が中心で全部重なるので最大5段(約0.42px=0.026ブロック)、それ以外はほぼ0.04〜0.24px。UVは面ごと指定なので、サイズが変わってもテクスチャはずれない。
+- 一緒に動く部品どうしだけ比べる(車輪・ハンドル・砲塔など動くボーンはその中だけ)。`waterMask`は水を消すために奥行きだけ書き込む部品(色は塗らない)なので対象外。
+- ツール: `python3 tools/fix_zfighting.py scan <geo.json>`で検出、`fix`で修正(インデントは元の形式を保つ)。モデルを作り直したら(10.5節のバイク差し替えも)最後にこれを掛けること。
 
 ---
 
@@ -299,8 +338,8 @@ SuperbWarfareの弾薬/乗り物系リソースを「持っているだけ」で
 
 - SRAWランチャーの`GeoModel.getAnimation`NPEクラッシュ(2.2節参照、調査中断中)。
 - `beast_missile_designator`/`active_defense_system`/`coma_grenade`/`flashbang_grenade`/`stun_grenade`/`iced_tea`/各種設計図アイテム/9章の無限系アイテム3種のクラフトレシピ未設定(現状クリエイティブのみ)。
-- 車両まわりで実機未確認の点: バイクの傾く向きと深く傾いたときの車高(`Collision`箱も傾くので浮く可能性)、0.8.9.0での車両の描画・乗車(起動とデータ読込のみ確認済み)。
-- アサルトボート後部機銃のモデルが照準に追従しない(10.1節)。
+- 車両まわりで実機未確認の点: バイクの傾く向きと深く傾いたときの車高(`Collision`箱も傾くので浮く可能性)、0.8.9.0での車両の描画・乗車(起動とデータ読込のみ確認済み)、乗用車4種の1.25倍拡大(10.7節)後の走行・段差越え・乗り降り・三人称カメラ、窓の透過(10.6節)で乗員や車内が窓越しに正しく見えるか(半透明の描画順で乗員が消えないか、0.8.9.0で透けるか)。
+- アサルトボートの実機未確認の点(10.1節): `AssaultBoatRenderer`はビルド未確認(SBW/Simple Bedrock Model 2.5.1のソースでAPI名は照合済み)。後部機銃のモデルが射手の向きに追従するか(左右・上下の向きが逆になっていないか)、プロペラ・舵・ズーム中のRWS非表示がSBWのスピードボートと同じに動くか、座席を下げた後の視界と乗員の見え方。
 - フラッシュバンに耳鳴り/聴覚低下の演出なし。
 - `coma_grenade`のダメージ0仕様は意図的(スタン専用武器として設計)。ダメージも欲しい場合は要相談。
 - ADSのLesRaisins Tactical Equipments対応(3.5節)は実装済みだがMDG(このプロジェクトのdevビルド環境)側で動作未確認 — TACZ+LesRaisinsをMDGのdevクライアント(`gradlew runClient`)に入れるとLesRaisins自身のmixin(`LivingEntityMixin`の`getUseItem`シャドウ)がMDGのrefmap再マッピングと噛み合わずクラッシュするため、実機(パッケージ済みjar+通常のForgeランチャー環境)での確認待ち。

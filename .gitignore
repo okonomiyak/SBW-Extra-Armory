@@ -32,3 +32,4 @@ logs/
 
 # local-only notes
 /HANDOVER.md
+__pycache__/
