@@ -245,7 +245,7 @@ SuperbWarfareの弾薬/乗り物系リソースを「持っているだけ」で
 - 描画: 0.8.9.1+は車が`BasicVehicleRenderer`、ホバークラフト/アサルトボートは`SpeedBoatRenderer`(`move_propeller`/`move_rudder`ボーンを回す)。0.8.9.0は全車`LegacyVehicleRenderer`。
 - 機銃の発砲炎は自作の`animations/bedrock/vehicle/machine_gun_flare.animation.json`(`flare`ボーンのみ)。SBW本体のHMG/スピードボート用アニメを流用すると、存在しないボーン指定(`gun`/`action`/`m2hb`等)が別のボーンに当たり、撃つとタイヤが巨大化するバグがあった。
 - アイコン: `textures/vehicle_icon/<id>_icon.png`(256x64、白線画)。コンテナ用は`assets/superbwarfare/textures/vehicle_icon/container/<id>.png`(SBWが`superbwarfare`名前空間からしか読まないため)。
-- アサルトボートの後部機銃: SBWのデータ駆動の追従(武器データの`BoundBonesYaw`/`BoundBonesPitch`、基準向き`ShootPos.DefaultBarrelDirection`)で`aftYaw`/`aftPitch`を射手の視線に合わせて回す(Javaのレンダラ追加なし。`SpeedBoatRenderer`は親の`transformCustomModelPart`を呼ぶので有効)。SBWの仰角回転は銃身が前向き(モデル−Z)の前提なので、銃の部品(`aftYaw`/`aftPitch`/`aftFlare`)はY軸180°回して前向きに作り直し、その親に固定ボーン`aftFlip`(回転[0,180,0])を挟んで普段の見た目は後ろ向きのまま。基準向きは[0,0,−1](真後ろ)。射手がいないときは後ろ向きで静止。0.8.9.0のGeckoLib描画(`LegacyVehicleRenderer`)ではこの追従は効かない見込み(未確認)。
+- アサルトボートの後部機銃: 専用レンダラ`client/AssaultBoatRenderer`(0.8.9.1+のみ、`BasicVehicleRenderer`継承)で、毎フレーム席2(後部機銃手)の視線から`aftYaw`/`aftPitch`を直接回す。SBWが砲塔を回すのと同じ約束(ヨーは船に対するMCの角度で`rotationY`、ピッチは`-xRot`で`rotationX`)。SBWの砲塔は1台に1つで前部RWSが使っているため、2つ目の機銃はこの方式にした(SBWの乗員用ウェポンステーションは砲塔に載る前提で、船尾には使えない)。銃の部品は前向きに作り、親の固定ボーン`aftFlip`(Y軸180°)で普段は後ろ向き。ピッチは席2の`MinPitch`/`MaxPitch`(-20/50)で制限。射手がいないときは後ろ向きで静止。先に試したデータ駆動の追従(武器データの`BoundBonesYaw`/`BoundBonesPitch`)は実機で動かなかったため削除した(原因は未特定)。`SpeedBoatRenderer`はKotlinのfinalクラスで継承できないので、プロペラ・舵の回転とズーム中のRWS非表示はこのクラスで同じ処理を書き直している。0.8.9.0のGeckoLib描画(`LegacyVehicleRenderer`)では後部機銃は動かない。
 - アサルトボートの座席(機銃手以外の4席): 操縦室は床1.75・横窓2.27〜2.75・フロントガラス2.13〜2.89・天井下面2.82と高さが約1ブロックしかなく、以前の高さ1.52〜1.72では目線(座席+1.62)が天井より上、頭が屋根を突き抜けていた。防具を着けた頭(座席+1.95)が天井に収まる上限の0.87にそろえた(目線2.49=窓のほぼ中央)。その分、腰は座面より少し沈み、前に伸ばした脚は床下(船体内)に隠れる。後席2つは腕が側壁から出ていたので、座席とベンチ(`interior`の座面)を横位置±1.134→±0.86へ内側に寄せた。前部RWSの射手(席1)は`CameraPos`が銃身固定なので座席高さの影響なし。後部機銃手(席2)は立ち姿勢で甲板上のまま(変更なし)。
 
 ### 10.2 データ作成上の注意(実際にハマった点)
@@ -339,7 +339,7 @@ SuperbWarfareの弾薬/乗り物系リソースを「持っているだけ」で
 - SRAWランチャーの`GeoModel.getAnimation`NPEクラッシュ(2.2節参照、調査中断中)。
 - `beast_missile_designator`/`active_defense_system`/`coma_grenade`/`flashbang_grenade`/`stun_grenade`/`iced_tea`/各種設計図アイテム/9章の無限系アイテム3種のクラフトレシピ未設定(現状クリエイティブのみ)。
 - 車両まわりで実機未確認の点: バイクの傾く向きと深く傾いたときの車高(`Collision`箱も傾くので浮く可能性)、0.8.9.0での車両の描画・乗車(起動とデータ読込のみ確認済み)、乗用車4種の1.25倍拡大(10.7節)後の走行・段差越え・乗り降り・三人称カメラ、窓の透過(10.6節)で乗員や車内が窓越しに正しく見えるか(半透明の描画順で乗員が消えないか、0.8.9.0で透けるか)。
-- アサルトボートの実機未確認の点(10.1節): 後部機銃のモデルが射手の向きに追従するか(左右・上下の向きが逆になっていないか)、座席を下げた後の視界と乗員の見え方。
+- アサルトボートの実機未確認の点(10.1節): `AssaultBoatRenderer`はビルド未確認(SBW/Simple Bedrock Model 2.5.1のソースでAPI名は照合済み)。後部機銃のモデルが射手の向きに追従するか(左右・上下の向きが逆になっていないか)、プロペラ・舵・ズーム中のRWS非表示がSBWのスピードボートと同じに動くか、座席を下げた後の視界と乗員の見え方。
 - フラッシュバンに耳鳴り/聴覚低下の演出なし。
 - `coma_grenade`のダメージ0仕様は意図的(スタン専用武器として設計)。ダメージも欲しい場合は要相談。
 - ADSのLesRaisins Tactical Equipments対応(3.5節)は実装済みだがMDG(このプロジェクトのdevビルド環境)側で動作未確認 — TACZ+LesRaisinsをMDGのdevクライアント(`gradlew runClient`)に入れるとLesRaisins自身のmixin(`LivingEntityMixin`の`getUseItem`シャドウ)がMDGのrefmap再マッピングと噛み合わずクラッシュするため、実機(パッケージ済みjar+通常のForgeランチャー環境)での確認待ち。

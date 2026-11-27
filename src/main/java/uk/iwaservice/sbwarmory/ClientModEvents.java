@@ -51,7 +51,8 @@ public final class ClientModEvents {
             event.registerEntityRenderer(ModRegistry.MOTORCYCLE.get(), com.atsuishio.superbwarfare.client.renderer.entity.BasicVehicleRenderer::new);
             // SBW's speedboat renderer spins move_propeller / move_rudder by bone name; no speedboat-specific casts.
             event.registerEntityRenderer(ModRegistry.HOVERCRAFT.get(), com.atsuishio.superbwarfare.client.renderer.entity.SpeedBoatRenderer::new);
-            event.registerEntityRenderer(ModRegistry.ASSAULT_BOAT.get(), com.atsuishio.superbwarfare.client.renderer.entity.SpeedBoatRenderer::new);
+            // Speedboat behaviour plus the aft MG following its gunner (SpeedBoatRenderer is final).
+            event.registerEntityRenderer(ModRegistry.ASSAULT_BOAT.get(), uk.iwaservice.sbwarmory.client.AssaultBoatRenderer::new);
         }
     }
 
