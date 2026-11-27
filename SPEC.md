@@ -255,12 +255,12 @@ SuperbWarfareの弾薬/乗り物系リソースを「持っているだけ」で
 - 「SBW Extra Armory」(`itemGroup.sbwarmory`): 車両以外。以前はタイトルキーが`itemGroup.smokelauncher`で未翻訳だったのを修正。
 - 「SBW Extra Armory: 車両」(`itemGroup.sbwarmory.vehicles`): 車両7種のコンテナ+`vehicle_ammo_box`+`vehicle_battery_pack`。アイコンはプロボックスのコンテナ。
 
-### 10.5 バイクのモデル・テクスチャ差し替え (編集中)
-- バイク(`motorcycle`)の見た目を作り直し中。作業用コピーは`wip/motorcycle/`(jarに含まれない)。本番の`assets/sbwarmory/models/bedrock/vehicle/motorcycle.geo.json`と`textures/bedrock/vehicle/motorcycle.png`はまだ旧版のまま。
-- `wip/motorcycle/`の中身: モデル/テクスチャのコピー、`NOTES.md`(戻し先と守るべき点)、使用色パレット(`palette.md`、`motorcycle.gpl`/`.hex`の20色、`motorcycle_extended.*`の89色)。
+### 10.5 バイクのモデル・テクスチャ差し替え
+- バイク(`motorcycle`)の見た目を作り直し、本番の`assets/sbwarmory/models/bedrock/vehicle/motorcycle.geo.json`と`textures/bedrock/vehicle/motorcycle.png`を新版に差し替えた。テクスチャは512×512→128×128(geo.jsonの`texture_width`/`texture_height`も128)。車体寸法・ボーン名・車輪/ハンドルのpivotは旧版と同じなので、データJSON(座席・`OBB`)は変更なし。作業用コピーは`wip/motorcycle/`(jarに含まれない)。
+- `wip/motorcycle/`の中身: 新版モデル/テクスチャの編集元(Zファイティング修正前のまま)、`NOTES.md`(戻し先と守るべき点)、使用色パレット(`palette.md`、`motorcycle.gpl`/`.hex`の20色、`motorcycle_extended.*`の89色)。
 - 差し替え時の制約: ボーン名`root`/`body`/`steering`/`engine`/`rear`/`lights`/`Wheel`/`wheelL0Turn`/`wheelL1`は変えない、identifierは`geometry.motorcycle`のまま、テクスチャサイズを変えたらgeo.jsonの`texture_width`/`texture_height`も合わせる。車体寸法や座る位置を大きく変えたら`data/sbwarmory/sbw/vehicles/motorcycle.json`の`OBB`/`Seats`も調整。
 - 円形パーツ(タイヤ等)は同じ直方体をpivot=円の中心で回転複製して作る(現行タイヤは12個×30°、開始角15°)。
-- 差し替えたら`python3 tools/fix_zfighting.py fix`で重なり点滅を消すこと(10.8節)。作業用コピーには未適用(元のモデルには28組の重なりがある)。
+- 差し替えたら`python3 tools/fix_zfighting.py fix`で重なり点滅を消すこと(10.8節)。新版は11組の重なりがあり、本番ファイルにだけ適用済み(`wip/`の編集元は未適用なので、次に編集して戻すときも最後に掛ける)。パレット(`palette.md`等)は旧512×512テクスチャから作ったもの。
 
 ### 10.6 窓の透過
 - 窓のある6車種(`probox_wagon`/`probox_mg`/`hiace_van`/`luxury_sedan`/`hovercraft`/`assault_boat`)は、geo.jsonの`glass`ボーンが参照するテクスチャ領域のアルファを元の約45%(243〜251→107〜114)に下げ、窓越しに`interior`が見えるようにした。RGBはそのまま(色付きガラス)。`glass`の領域は他のボーンと共有していないので、窓以外には影響しない。
@@ -330,7 +330,6 @@ SuperbWarfareの弾薬/乗り物系リソースを「持っているだけ」で
 - SRAWランチャーの`GeoModel.getAnimation`NPEクラッシュ(2.2節参照、調査中断中)。
 - `beast_missile_designator`/`active_defense_system`/`coma_grenade`/`flashbang_grenade`/`stun_grenade`/`iced_tea`/各種設計図アイテム/9章の無限系アイテム3種のクラフトレシピ未設定(現状クリエイティブのみ)。
 - 車両まわりで実機未確認の点: バイクの傾く向きと深く傾いたときの車高(`Collision`箱も傾くので浮く可能性)、0.8.9.0での車両の描画・乗車(起動とデータ読込のみ確認済み)、乗用車4種の1.25倍拡大(10.7節)後の走行・段差越え・乗り降り・三人称カメラ、窓の透過(10.6節)で乗員や車内が窓越しに正しく見えるか(半透明の描画順で乗員が消えないか、0.8.9.0で透けるか)。
-- バイクのモデル・テクスチャ差し替えが編集中(10.5節)。本番ファイルは旧版のまま。
 - アサルトボート後部機銃のモデルが照準に追従しない(10.1節)。
 - フラッシュバンに耳鳴り/聴覚低下の演出なし。
 - `coma_grenade`のダメージ0仕様は意図的(スタン専用武器として設計)。ダメージも欲しい場合は要相談。
