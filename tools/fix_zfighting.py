@@ -45,24 +45,43 @@ def _rot_matrix(r):
 
 
 def _owner(bone, bones):
-    """Name of the nearest animated or rotated ancestor bone, or 'static'."""
+    """Name of the nearest animated ancestor bone (it moves at runtime), or 'static'."""
     n = bone['name']
     while n:
-        b = bones[n]
-        if n.startswith(ANIM) or (b.get('rotation') and any(b['rotation'])):
+        if n.startswith(ANIM):
             return n
-        n = b.get('parent')
+        n = bones[n].get('parent')
     return 'static'
+
+
+def _bone_transform(name, bones, cache):
+    """Bind-pose (matrix, offset) of a bone: its own rotation about its pivot, after its parents'."""
+    if name in cache:
+        return cache[name]
+    b = bones[name]
+    rot = b.get('rotation') or [0, 0, 0]
+    m = _rot_matrix(rot) if any(rot) else IDENTITY
+    p = b.get('pivot', [0, 0, 0])
+    t = [p[i] - sum(m[i][k] * p[k] for k in range(3)) for i in range(3)]   # x -> m x + t
+    if b.get('parent'):
+        pm, pt = _bone_transform(b['parent'], bones, cache)
+        m2 = [[sum(pm[i][k] * m[k][j] for k in range(3)) for j in range(3)] for i in range(3)]
+        t = [sum(pm[i][k] * t[k] for k in range(3)) + pt[i] for i in range(3)]
+        m = m2
+    cache[name] = (m, t)
+    return m, t
 
 
 def _faces(g):
     """Every cube face as a dict with its owner group, normal, plane offset and corner points."""
     bones = {b['name']: b for b in g['bones']}
+    cache = {}
     out = []
     for b in g['bones']:
         if b['name'] in SKIP:
             continue
         owner = _owner(b, bones)
+        bm, bt = _bone_transform(b['name'], bones, cache)
         for c in b.get('cubes', []):
             rot = c.get('rotation') or [0, 0, 0]
             m = _rot_matrix(rot) if any(rot) else IDENTITY
@@ -70,7 +89,9 @@ def _faces(g):
             o, s, inf = c['origin'], c['size'], c.get('inflate', 0)
             lo = [o[k] - inf for k in range(3)]
             hi = [o[k] + s[k] + inf for k in range(3)]
-            to_model = lambda q: [sum(m[i][k] * (q[k] - p[k]) for k in range(3)) + p[i] for i in range(3)]
+            def to_model(q, m=m, p=p, bm=bm, bt=bt):
+                q = [sum(m[i][k] * (q[k] - p[k]) for k in range(3)) + p[i] for i in range(3)]
+                return [sum(bm[i][k] * q[k] for k in range(3)) + bt[i] for i in range(3)]
             for ax in range(3):
                 u, v = [k for k in range(3) if k != ax]
                 for sg, val in ((-1, lo[ax]), (1, hi[ax])):
@@ -79,7 +100,7 @@ def _faces(g):
                         q = [0.0, 0.0, 0.0]
                         q[ax], q[u], q[v] = val, a, bb
                         quad.append(to_model(q))
-                    n = [m[i][ax] * sg for i in range(3)]
+                    n = [sum(bm[i][k] * m[k][ax] for k in range(3)) * sg for i in range(3)]
                     out.append({'owner': owner, 'bone': b['name'], 'cube': c, 'ax': ax, 'sg': sg, 'n': n,
                                 'd': sum(n[i] * quad[0][i] for i in range(3)), 'quad': quad,
                                 'area': (hi[u] - lo[u]) * (hi[v] - lo[v])})
