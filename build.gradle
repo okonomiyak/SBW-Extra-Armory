@@ -84,6 +84,9 @@ dependencies {
     // AssaultBoatRenderer turns bones through its BoneState API, so it is needed to compile only.
     // Same coordinates SBW 0.8.9.1 builds against.
     modCompileOnly 'com.github.mcmodderanchor:simplebedrockmodel:2.5.1-forge-mc1.20.1'
+    // Simple Bedrock Model's model classes extend MAE types (it bundles mae-1.1.4 as jar-in-jar),
+    // so javac needs MAE to see VehicleModelInstance's supertypes. Plain library on Maven Central.
+    compileOnly 'com.maydaymemory:mae:1.1.4'
 
     // GrenadeCarbineItem/GrenadeCarbineItemModel compile directly against GeckoLib's renderer API.
     modImplementation 'curse.maven:geckolib-388172:8285794'

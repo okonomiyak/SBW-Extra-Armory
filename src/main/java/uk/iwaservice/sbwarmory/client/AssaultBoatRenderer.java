@@ -66,20 +66,22 @@ public class AssaultBoatRenderer extends BasicVehicleRenderer {
         }
 
         // Aft MG: the gun is modeled facing forward under the fixed 180-degree aftFlip bone, so at
-        // rest (no gunner) it points astern. Yaw/pitch use the same conventions as SBW's turret and
-        // barrel bones: yaw relative to the boat in MC degrees, pitch as -xRot.
+        // rest (no gunner) it points astern. The bones are named move_* because SBW only keeps bones
+        // matching its name patterns (move_*, turret, barrel, ...) as movable; any other bone is
+        // baked into the static mesh and getBone returns null. Signs follow SBW's turret/barrel:
+        // turretYRot is boat yaw minus aim yaw (it decreases when aiming right), pitch is -xRot.
         Entity gunner = entity.getNthEntity(AFT_GUNNER_SEAT);
         if (gunner == null) {
             return;
         }
         float boatYaw = Mth.rotLerp(partialTicks, entity.yRotO, entity.getYRot());
-        float yaw = Mth.wrapDegrees(gunner.getViewYRot(partialTicks) - boatYaw - 180F);
+        float yaw = Mth.wrapDegrees(boatYaw - gunner.getViewYRot(partialTicks) + 180F);
         float pitch = Mth.clamp(gunner.getViewXRot(partialTicks), -AFT_MAX_UP, AFT_MAX_DOWN);
-        BoneState aftYaw = instance.getBone("aftYaw");
+        BoneState aftYaw = instance.getBone("move_aftYaw");
         if (aftYaw != null) {
             aftYaw.rotation.rotationY(yaw * Mth.DEG_TO_RAD);
         }
-        BoneState aftPitch = instance.getBone("aftPitch");
+        BoneState aftPitch = instance.getBone("move_aftPitch");
         if (aftPitch != null) {
             aftPitch.rotation.rotationX(-pitch * Mth.DEG_TO_RAD);
         }

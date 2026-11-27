@@ -15269,7 +15269,7 @@
 					]
 				},
 				{
-					"name": "aftYaw",
+					"name": "move_aftYaw",
 					"parent": "aftFlip",
 					"pivot": [
 						0.0,
@@ -15872,8 +15872,8 @@
 					]
 				},
 				{
-					"name": "aftPitch",
-					"parent": "aftYaw",
+					"name": "move_aftPitch",
+					"parent": "move_aftYaw",
 					"pivot": [
 						0.0,
 						46.86,
@@ -16846,7 +16846,7 @@
 				},
 				{
 					"name": "aftFlare",
-					"parent": "aftPitch",
+					"parent": "move_aftPitch",
 					"pivot": [
 						0.0,
 						47.135,
