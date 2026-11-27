@@ -10,6 +10,7 @@ import uk.iwaservice.sbwarmory.client.SpringGrenadeEntityRenderer;
 import uk.iwaservice.sbwarmory.client.ThrowingKnifeEntityRenderer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -63,6 +64,12 @@ public final class ClientModEvents {
             event.registerEntityRenderer(ModRegistry.MOTORCYCLE.get(), uk.iwaservice.sbwarmory.client.LegacyVehicleRenderer::new);
             event.registerEntityRenderer(ModRegistry.HOVERCRAFT.get(), uk.iwaservice.sbwarmory.client.LegacyVehicleRenderer::new);
         }
+    }
+
+    /** Below every HUD overlay, so the hotbar, health and crosshair stay readable on top of the goggle view. */
+    @SubscribeEvent
+    public static void onRegisterGuiOverlays(RegisterGuiOverlaysEvent event) {
+        event.registerBelowAll("night_vision", ClientForgeEvents::renderNightVisionOverlay);
     }
 
     @SubscribeEvent

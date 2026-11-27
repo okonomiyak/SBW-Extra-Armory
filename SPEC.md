@@ -114,7 +114,7 @@ HANDOVER.md(開発経緯・詰まった箇所のメモ)、README.md(利用者向
 - GeckoLibの`GeoArmorRenderer`+`armorHead`ボーン(`pivot=[0,24,0]`必須、プレイヤーモデルの頭座標系に合わせる)で専用3Dモデルを描画。5%大きめにスケール(`withScale(1.05F)`)してバニラの頭とのZファイティングを回避。
 - 装備中(頭スロットに入っている間)、`inventoryTick`でバニラ`NIGHT_VISION`効果を継続付与(220tickごとに再付与)。
 - **Nキー**(`ModKeyMappings.TOGGLE_NIGHT_VISION`)でON/OFFトグル可能。NBTの`Active`フラグ(既定true)で管理、`ToggleNightVisionPacket`でサーバーに反映。
-- 緑エフェクトは**一人称視点かつ効果ON**の時だけ有効。当初はバニラPostChain(`GameRenderer#loadEffect`)を使う専用シェーダーJSONだったが、Rubidium/Oculus系の軽量化Modを併用する実機環境でPostChainがシェーダーパック未選択でも黙って無効化される事例が確認されたため、**HUDレイヤーへのブレンド描画方式に切り替え済み**(`ClientForgeEvents#drawNightVisionOverlay`)。スコープのビネットと同じ`RenderGuiEvent.Post`経路を使うため、Sodium系Modの影響を受けない。旧`shaders/post/night_vision.json`は削除済み。
+- 緑エフェクトは**一人称視点かつ効果ON**の時だけ有効。当初はバニラPostChain(`GameRenderer#loadEffect`)を使う専用シェーダーJSONだったが、Rubidium/Oculus系の軽量化Modを併用する実機環境でPostChainがシェーダーパック未選択でも黙って無効化される事例が確認されたため、**HUDレイヤーへのブレンド描画方式に切り替え済み**(`ClientForgeEvents#drawNightVisionOverlay`)。Sodium系Modの影響を受けない。`ClientModEvents#onRegisterGuiOverlays`で`RegisterGuiOverlaysEvent#registerBelowAll`(ID `night_vision`)として登録し、HUDの一番下に描くので、ホットバー・体力・照準などはゴーグルの色・ノイズ・視野の影響を受けずに上に表示される(以前は`RenderGuiEvent.Post`でHUDごと緑になっていた)。バニラの画面端の暗がり(vignette)と同じく、描く間は深度テストと深度書き込みを切る。HUDごと描かれないので、F1でHUDを消すと暗視の見た目も消える。旧`shaders/post/night_vision.json`は削除済み。
 - 見た目はEscape from Tarkov風の暗視装置(明るい蛍光グリーン、ざらつき、楕円の視野)。画面全体に次の5層を順に描く(定数は`NVG_*`):
   1. 色: `(0.22, 1.0, 0.12)`を`DST_COLOR × ZERO`で乗算(明暗はほぼ緑チャンネルで残し、赤青をわずかに残して黄緑寄りに)。
   2. 増幅: 白を`DST_COLOR × ONE`(=dst×2)で描いて明るさを2倍。

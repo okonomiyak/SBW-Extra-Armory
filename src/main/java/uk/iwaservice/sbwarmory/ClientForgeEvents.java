@@ -25,6 +25,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderGuiEvent;
 import net.minecraftforge.client.event.ViewportEvent;
+import net.minecraftforge.client.gui.overlay.ForgeGui;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -94,8 +95,19 @@ public final class ClientForgeEvents {
      * disabled (Rubidium/Oculus). GuiGraphics#fill always resets to the default alpha blend func
      * internally, so the blend passes draw their quads directly.
      */
+    /** HUD overlay registered below all others in {@link ClientModEvents}, so the HUD draws on top of it. */
+    static void renderNightVisionOverlay(ForgeGui gui, GuiGraphics graphics, float partialTick, int width, int height) {
+        Minecraft mc = Minecraft.getInstance();
+        if (wearingActiveGoggles(mc.player) && mc.options.getCameraType().isFirstPerson()) {
+            drawNightVisionOverlay(graphics, width, height);
+        }
+    }
+
     private static void drawNightVisionOverlay(GuiGraphics graphics, int width, int height) {
         Matrix4f matrix = graphics.pose().last().pose();
+        // Same depth handling as vanilla's own vignette overlay, so the HUD drawn after us isn't depth-rejected.
+        RenderSystem.disableDepthTest();
+        RenderSystem.depthMask(false);
         RenderSystem.enableBlend();
 
         // Multiply by a phosphor green: keeps each pixel's brightness (mostly via its green channel)
@@ -137,6 +149,8 @@ public final class ClientForgeEvents {
         RenderSystem.defaultBlendFunc();
         Minecraft.getInstance().getTextureManager().getTexture(NVG_VIGNETTE).setFilter(true, false);
         graphics.blit(NVG_VIGNETTE, 0, 0, 0, 0, width, height, width, height);
+        RenderSystem.depthMask(true);
+        RenderSystem.enableDepthTest();
     }
 
     private static void drawColorQuad(Matrix4f matrix, int width, int height, float r, float g, float b) {
@@ -158,7 +172,7 @@ public final class ClientForgeEvents {
         event.setFOV(event.getFOV() / zoomLevel);
     }
 
-    /** LOWEST so the white-out also covers the scope/goggle overlays drawn in {@link #onRenderGui}. */
+    /** LOWEST so the white-out also covers the HUD and the scope overlay drawn in {@link #onRenderGui}. */
     @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.LOWEST)
     public static void onRenderFlashbang(RenderGuiEvent.Post event) {
         Player player = Minecraft.getInstance().player;
@@ -176,10 +190,6 @@ public final class ClientForgeEvents {
         GuiGraphics graphics = event.getGuiGraphics();
         int screenWidth = mc.getWindow().getGuiScaledWidth();
         int screenHeight = mc.getWindow().getGuiScaledHeight();
-
-        if (wearingActiveGoggles(player) && mc.options.getCameraType().isFirstPerson()) {
-            drawNightVisionOverlay(graphics, screenWidth, screenHeight);
-        }
 
         if (aimingStack(player) == null) {
             return;
