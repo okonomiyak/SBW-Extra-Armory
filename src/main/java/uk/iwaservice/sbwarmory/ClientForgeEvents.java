@@ -17,6 +17,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
@@ -43,6 +44,18 @@ public final class ClientForgeEvents {
             new ResourceLocation("superbwarfare", "textures/overlay/spyglass/spyglass.png");
     private static final float SCOPE_SCALE = 1.35F;
     private static final float SCOPE_ASPECT = 21F / 9F; // the source texture is a wide oval, not square
+
+    // Night vision overlay (see drawNightVisionOverlay). Textures are generated, not hand-drawn:
+    // nvg_noise is 256x256 gray around 128 (sd 17), nvg_vignette a 512x256 black alpha oval.
+    private static final ResourceLocation NVG_NOISE =
+            new ResourceLocation(SbwArmoryMod.MODID, "textures/overlay/nvg_noise.png");
+    private static final ResourceLocation NVG_VIGNETTE =
+            new ResourceLocation(SbwArmoryMod.MODID, "textures/overlay/nvg_vignette.png");
+    private static final int NVG_NOISE_SIZE = 256;
+    private static final float[] NVG_TINT = {0.22F, 1.0F, 0.12F};
+    private static final float NVG_GAIN = 1.0F;
+    private static final float[] NVG_LIFT = {0.01F, 0.045F, 0.0F};
+    private static final RandomSource NOISE_RANDOM = RandomSource.create();
 
     private static double zoomLevel = MIN_ZOOM;
     private static int fireHoldTicks = 0;
@@ -76,25 +89,65 @@ public final class ClientForgeEvents {
     }
 
     /**
-     * Multiplies the already-rendered scene by pure green (DST_COLOR * ZERO blend) instead of just
-     * alpha-blending a green haze on top - this keeps each pixel's own brightness (via its green
-     * channel) while zeroing red/blue, giving the grayscale-into-green "thermal/FLIR" look real NVG
-     * footage has, rather than a flat tinted fog. GuiGraphics#fill always resets to the default alpha
-     * blend func internally, so this bypasses it and draws the quad directly.
+     * Image-intensifier look (phosphor green, gain, grain, tube vignette) built purely from HUD-layer
+     * blends over the already-rendered scene, so it keeps working where PostChain shaders get
+     * disabled (Rubidium/Oculus). GuiGraphics#fill always resets to the default alpha blend func
+     * internally, so the blend passes draw their quads directly.
      */
-    private static void drawGreenMultiplyOverlay(GuiGraphics graphics, int x1, int y1, int x2, int y2) {
-        RenderSystem.enableBlend();
-        RenderSystem.blendFunc(GlStateManager.SourceFactor.DST_COLOR, GlStateManager.DestFactor.ZERO);
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+    private static void drawNightVisionOverlay(GuiGraphics graphics, int width, int height) {
         Matrix4f matrix = graphics.pose().last().pose();
+        RenderSystem.enableBlend();
+
+        // Multiply by a phosphor green: keeps each pixel's brightness (mostly via its green channel)
+        // while nearly zeroing red/blue, instead of a flat tinted haze.
+        RenderSystem.blendFunc(GlStateManager.SourceFactor.DST_COLOR, GlStateManager.DestFactor.ZERO);
+        drawColorQuad(matrix, width, height, NVG_TINT[0], NVG_TINT[1], NVG_TINT[2]);
+        // Gain: dst * src + dst, i.e. doubles the brightness like the intensifier tube does.
+        RenderSystem.blendFunc(GlStateManager.SourceFactor.DST_COLOR, GlStateManager.DestFactor.ONE);
+        drawColorQuad(matrix, width, height, NVG_GAIN, NVG_GAIN, NVG_GAIN);
+        // Lift pure black to a very dark green, as a real tube never shows true black.
+        RenderSystem.blendFunc(GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
+        drawColorQuad(matrix, width, height, NVG_LIFT[0], NVG_LIFT[1], NVG_LIFT[2]);
+
+        // Grain: modulate-2x (dst * src * 2) with a mid-gray noise texture, so texels above 128
+        // brighten and below darken. Tiled at one texel per screen pixel and re-offset every frame.
+        RenderSystem.blendFunc(GlStateManager.SourceFactor.DST_COLOR, GlStateManager.DestFactor.SRC_COLOR);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderTexture(0, NVG_NOISE);
+        float tile = (float) (NVG_NOISE_SIZE / Minecraft.getInstance().getWindow().getGuiScale());
+        float offsetX = NOISE_RANDOM.nextFloat() * tile;
+        float offsetY = NOISE_RANDOM.nextFloat() * tile;
+        boolean flipU = NOISE_RANDOM.nextBoolean();
+        float u0 = flipU ? 1 : 0;
+        float u1 = flipU ? 0 : 1;
+        BufferBuilder buffer = Tesselator.getInstance().getBuilder();
+        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        for (float x = -offsetX; x < width; x += tile) {
+            for (float y = -offsetY; y < height; y += tile) {
+                buffer.vertex(matrix, x, y + tile, 0).uv(u0, 1).endVertex();
+                buffer.vertex(matrix, x + tile, y + tile, 0).uv(u1, 1).endVertex();
+                buffer.vertex(matrix, x + tile, y, 0).uv(u1, 0).endVertex();
+                buffer.vertex(matrix, x, y, 0).uv(u0, 0).endVertex();
+            }
+        }
+        BufferUploader.drawWithShader(buffer.end());
+
+        // Tube vignette: wide oval, gradually darker toward the rim, black outside. Linear filtering
+        // so the stretched 512x256 mask stays smooth.
+        RenderSystem.defaultBlendFunc();
+        Minecraft.getInstance().getTextureManager().getTexture(NVG_VIGNETTE).setFilter(true, false);
+        graphics.blit(NVG_VIGNETTE, 0, 0, 0, 0, width, height, width, height);
+    }
+
+    private static void drawColorQuad(Matrix4f matrix, int width, int height, float r, float g, float b) {
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
         BufferBuilder buffer = Tesselator.getInstance().getBuilder();
         buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-        buffer.vertex(matrix, x1, y2, 0).color(0, 255, 0, 255).endVertex();
-        buffer.vertex(matrix, x2, y2, 0).color(0, 255, 0, 255).endVertex();
-        buffer.vertex(matrix, x2, y1, 0).color(0, 255, 0, 255).endVertex();
-        buffer.vertex(matrix, x1, y1, 0).color(0, 255, 0, 255).endVertex();
+        buffer.vertex(matrix, 0, height, 0).color(r, g, b, 1F).endVertex();
+        buffer.vertex(matrix, width, height, 0).color(r, g, b, 1F).endVertex();
+        buffer.vertex(matrix, width, 0, 0).color(r, g, b, 1F).endVertex();
+        buffer.vertex(matrix, 0, 0, 0).color(r, g, b, 1F).endVertex();
         BufferUploader.drawWithShader(buffer.end());
-        RenderSystem.defaultBlendFunc();
     }
 
     @SubscribeEvent
@@ -125,7 +178,7 @@ public final class ClientForgeEvents {
         int screenHeight = mc.getWindow().getGuiScaledHeight();
 
         if (wearingActiveGoggles(player) && mc.options.getCameraType().isFirstPerson()) {
-            drawGreenMultiplyOverlay(graphics, 0, 0, screenWidth, screenHeight);
+            drawNightVisionOverlay(graphics, screenWidth, screenHeight);
         }
 
         if (aimingStack(player) == null) {
